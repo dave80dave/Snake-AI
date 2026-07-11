@@ -1,28 +1,26 @@
 package at.orter.snake;
 
 public class Playground {
-    private int[][] playGround;
-    private int x;
-    private int y;
 
-    public Playground(int x, int y) {
-        this.x = x;
-        this.y = y;
+    private final int[][] playGround;
+    private final int width;
+    private final int height;
+
+    public Playground(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.playGround = new int[height][width];
     }
 
     public int[][] getPlayGround() {
         return playGround;
     }
 
-    public int getX() {
-        return x;
+    public int getWidth() {
+        return width;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public void setPlayGround(int[][] playGround) {
-        this.playGround = playGround;
+    public int getHeight() {
+        return height;
     }
 }
