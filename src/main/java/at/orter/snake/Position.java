@@ -11,6 +11,32 @@ public class Position {
         this.y = y;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        // DE: Gleiches Objekt im Speicher ist immer gleich.
+        // EN: The same object in memory is always equal.
+        if (this == obj) {
+            return true;
+        }
+
+        // DE: Nur eine andere Position kann die gleiche Spielfeldposition sein.
+        // EN: Only another Position can represent the same playground field.
+        if (!(obj instanceof Position other)) {
+            return false;
+        }
+
+        // DE: Zwei Positionen sind gleich, wenn x und y gleich sind.
+        // EN: Two positions are equal when x and y are equal.
+        return x == other.x && y == other.y;
+    }
+
+    @Override
+    public int hashCode() {
+        // DE: hashCode gehoert zu equals und verwendet dieselben Werte.
+        // EN: hashCode belongs with equals and uses the same values.
+        return 31 * x + y;
+    }
+
     public int getX() {
         return x;
     }

@@ -8,7 +8,7 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 
 - Maven/Java-Projekt mit Package `at.orter.snake`
 - Spielfeldklasse `Playground`
-- Positionsklasse `Position`
+- Positionsklasse `Position` mit Wertevergleich ueber `equals(...)`
 - Schlange als Liste von Positionen in `Snake`
 - Futterklasse `Food` mit einer einzelnen Apfelposition
 - Spielcontainer `Game`
@@ -51,7 +51,7 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 
 - Maven/Java project with package `at.orter.snake`
 - Playground class `Playground`
-- Position class `Position`
+- Position class `Position` with value comparison through `equals(...)`
 - Snake stored as a list of positions in `Snake`
 - Food class `Food` with one single apple position
 - Game container `Game`

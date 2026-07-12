@@ -43,7 +43,6 @@ public class Game {
         snake.move(currentDirection);
     }
 
-
     public Playground getPlayground() {
         return playground;
     }
