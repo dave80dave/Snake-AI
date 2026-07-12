@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Snake {
-    // Erstes Element = Kopf, letztes Element = Schwanz.
+    // DE: Erstes Element = Kopf, letztes Element = Schwanz.
+    // EN: First element = head, last element = tail.
     private List<Position> snakePosition;
 
     public Snake(Position startPosition) {
@@ -23,19 +24,22 @@ public class Snake {
 
     public void move(Direction direction){
         moveHead(direction);
-        // Bei normaler Bewegung bleibt die Laenge gleich.
+        // DE: Bei normaler Bewegung bleibt die Laenge gleich.
+        // EN: During normal movement, the length stays the same.
         snakePosition.removeLast();
     }
 
     public void grow(Direction direction){
-        // Beim Wachsen bleibt der Schwanz erhalten.
+        // DE: Beim Wachsen bleibt der Schwanz erhalten.
+        // EN: When growing, the tail stays in the list.
         moveHead(direction);
     }
 
     private void moveHead(Direction direction) {
         Position head = snakePosition.getFirst();
 
-        // Aus der aktuellen Kopfposition wird die neue Kopfposition berechnet.
+        // DE: Aus der aktuellen Kopfposition wird die neue Kopfposition berechnet.
+        // EN: The new head position is calculated from the current head position.
         Position newHead = switch (direction){
             case UP -> new Position(head.getX(), head.getY() -1);
             case DOWN -> new Position(head.getX(), head.getY() +1);
@@ -43,7 +47,8 @@ public class Snake {
             case LEFT -> new Position(head.getX() - 1, head.getY());
         };
 
-        // Der neue Kopf wird immer vorne in die Liste gesetzt.
+        // DE: Der neue Kopf wird immer vorne in die Liste gesetzt.
+        // EN: The new head is always added to the front of the list.
         snakePosition.addFirst(newHead);
     }
 }
