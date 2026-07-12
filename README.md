@@ -32,10 +32,10 @@ Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwan
 ### Naechste Schritte
 
 - `Game` speichert die aktuelle Richtung
-- `tick()` entscheidet zwischen Wachstum und normaler Bewegung anhand der Apfelposition
+- `tick()` prueft Wandkollision und entscheidet danach zwischen Wachstum und normaler Bewegung
 - direkte Gegenrichtungen werden in `changeDirection(...)` blockiert
 - Apfelposition wird mit der naechsten Kopfposition verglichen
-- Kollision mit Wand pruefen
+- Wandkollision setzt `gameOver` und verhindert Bewegung aus dem Spielfeld
 - Kollision mit dem eigenen Koerper pruefen
 - Spielfeld im Terminal anzeigen
 - Danach: AI mit selbst gebautem Reinforcement Learning oder Q-Learning
@@ -74,10 +74,10 @@ During normal movement, a new head is added to the front and the tail is removed
 ### Next Steps
 
 - `Game` stores the current direction
-- `tick()` decides between growth and normal movement based on the apple position
+- `tick()` checks wall collision and then decides between growth and normal movement
 - direct opposite directions are blocked in `changeDirection(...)`
 - Apple position is compared with the next head position
-- Check wall collision
+- Wall collision sets `gameOver` and prevents movement outside the playground
 - Check collision with the snake body
 - Print the playground in the terminal
 - Later: AI with self-built reinforcement learning or Q-learning
