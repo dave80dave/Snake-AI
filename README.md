@@ -30,8 +30,9 @@ Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwan
 
 ### Naechste Schritte
 
-- `Game` soll die aktuelle Richtung speichern
-- `tick()` soll die Schlange einmal bewegen
+- `Game` speichert die aktuelle Richtung
+- `tick()` bewegt die Schlange einmal in der aktuellen Richtung
+- direkte Gegenrichtungen werden in `changeDirection(...)` blockiert
 - `Game` soll entscheiden, ob `move` oder `grow` verwendet wird
 - Apfelposition mit neuer Kopfposition vergleichen
 - Kollision mit Wand pruefen
@@ -71,8 +72,9 @@ During normal movement, a new head is added to the front and the tail is removed
 
 ### Next Steps
 
-- `Game` should store the current direction
-- `tick()` should move the snake one step
+- `Game` stores the current direction
+- `tick()` moves the snake one step in the current direction
+- direct opposite directions are blocked in `changeDirection(...)`
 - `Game` should decide whether to use `move` or `grow`
 - Compare the apple position with the new head position
 - Check wall collision
