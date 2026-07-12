@@ -13,6 +13,7 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - Futterklasse `Food`
 - Spielcontainer `Game`
 - Bewegungsrichtungen als `Direction` enum
+- Zweisprachige Lernkommentare im Quellcode
 - Erste Bewegungslogik fuer die Schlange:
   - `move(direction)` bewegt die Schlange ohne Wachstum
   - `grow(direction)` bewegt die Schlange und laesst den Schwanz erhalten
@@ -53,6 +54,7 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - Food class `Food`
 - Game container `Game`
 - Movement directions as a `Direction` enum
+- Bilingual learning comments in the source code
 - First movement logic for the snake:
   - `move(direction)` moves the snake without growing
   - `grow(direction)` moves the snake and keeps the tail

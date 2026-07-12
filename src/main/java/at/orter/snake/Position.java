@@ -1,6 +1,8 @@
 package at.orter.snake;
 
 public class Position {
+    // DE: x beschreibt die Spalte, y beschreibt die Zeile im Spielfeld.
+    // EN: x describes the column, y describes the row on the playground.
     private int x;
     private int y;
 
@@ -27,6 +29,8 @@ public class Position {
 
     @Override
     public String toString() {
+        // DE: Hilft beim Debuggen, weil Positionen lesbar ausgegeben werden.
+        // EN: Helps with debugging because positions are printed in a readable way.
         return "Position{" +
                 "x=" + x +
                 ", y=" + y +
