@@ -1,25 +1,19 @@
 package at.orter.snake;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Food {
-    // DE: Aktuell werden Apfelpositionen als Liste gespeichert.
-    // EN: Apple positions are currently stored as a list.
-    private List<Position> applePosition;
+    // DE: Die Position des Apfels auf dem Spielfeld.
+    // EN: The position of the apple on the playground.
+    private Position applePosition;
 
-    public Food(Position startApple) {
-        // DE: Beim Erstellen bekommt Food seine erste Apfelposition.
-        // EN: When Food is created, it gets its first apple position.
-        applePosition = new ArrayList<>();
-        applePosition.add(startApple);
+    public Food(Position applePosition) {
+        this.applePosition = applePosition;
     }
 
-    public List<Position> getApplePosition() {
+    public Position getApplePosition() {
         return applePosition;
     }
 
-    public void setPosition(List<Position> applePosition) {
+    public void setApplePosition(Position applePosition) {
         this.applePosition = applePosition;
     }
 }
