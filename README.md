@@ -32,10 +32,9 @@ Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwan
 ### Naechste Schritte
 
 - `Game` speichert die aktuelle Richtung
-- `tick()` bewegt die Schlange einmal in der aktuellen Richtung
+- `tick()` entscheidet zwischen Wachstum und normaler Bewegung anhand der Apfelposition
 - direkte Gegenrichtungen werden in `changeDirection(...)` blockiert
-- `Game` soll entscheiden, ob `move` oder `grow` verwendet wird
-- Apfelposition mit neuer Kopfposition vergleichen
+- Apfelposition wird mit der naechsten Kopfposition verglichen
 - Kollision mit Wand pruefen
 - Kollision mit dem eigenen Koerper pruefen
 - Spielfeld im Terminal anzeigen
@@ -75,10 +74,9 @@ During normal movement, a new head is added to the front and the tail is removed
 ### Next Steps
 
 - `Game` stores the current direction
-- `tick()` moves the snake one step in the current direction
+- `tick()` decides between growth and normal movement based on the apple position
 - direct opposite directions are blocked in `changeDirection(...)`
-- `Game` should decide whether to use `move` or `grow`
-- Compare the apple position with the new head position
+- Apple position is compared with the next head position
 - Check wall collision
 - Check collision with the snake body
 - Print the playground in the terminal

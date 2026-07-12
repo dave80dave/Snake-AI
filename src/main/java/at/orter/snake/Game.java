@@ -38,9 +38,16 @@ public class Game {
     }
 
     public void tick() {
-        // DE: Ein Tick bewegt die Schlange genau einen Schritt in der aktuellen Richtung.
-        // EN: One tick moves the snake exactly one step in the current direction.
-        snake.move(currentDirection);
+        // DE: Ein Tick prueft zuerst, ob die Schlange den Apfel trifft.
+        // EN: One tick first checks whether the snake hits the apple.
+        Position nextHead = snake.getNextHeadPosition(currentDirection);
+        Position applePosition = food.getApplePosition();
+
+        if (nextHead.equals(applePosition)) {
+            snake.grow(currentDirection);
+        } else {
+            snake.move(currentDirection);
+        }
     }
 
     public Playground getPlayground() {
