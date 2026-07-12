@@ -22,33 +22,38 @@ public class Snake {
         this.snakePosition = snakePosition;
     }
 
-    public void move(Direction direction){
+    public void move(Direction direction) {
         moveHead(direction);
         // DE: Bei normaler Bewegung bleibt die Laenge gleich.
         // EN: During normal movement, the length stays the same.
         snakePosition.removeLast();
     }
 
-    public void grow(Direction direction){
+    public void grow(Direction direction) {
         // DE: Beim Wachsen bleibt der Schwanz erhalten.
         // EN: When growing, the tail stays in the list.
         moveHead(direction);
     }
 
     private void moveHead(Direction direction) {
+        // DE: Die Vorschau-Methode berechnet den neuen Kopf, danach wird er wirklich eingefuegt.
+        // EN: The preview method calculates the new head, then it is actually inserted.
+        Position newHead = getNextHeadPosition(direction);
+        snakePosition.addFirst(newHead);
+    }
+
+    public Position getNextHeadPosition(Direction direction) {
+        // DE: Diese Methode berechnet nur die naechste Kopfposition und veraendert die Schlange nicht.
+        // EN: This method only calculates the next head position and does not change the snake.
         Position head = snakePosition.getFirst();
 
-        // DE: Aus der aktuellen Kopfposition wird die neue Kopfposition berechnet.
-        // EN: The new head position is calculated from the current head position.
-        Position newHead = switch (direction){
-            case UP -> new Position(head.getX(), head.getY() -1);
-            case DOWN -> new Position(head.getX(), head.getY() +1);
+        // DE: Je nach Richtung wird x oder y um ein Feld veraendert.
+        // EN: Depending on the direction, x or y is changed by one field.
+        return switch (direction) {
+            case UP -> new Position(head.getX(), head.getY() - 1);
+            case DOWN -> new Position(head.getX(), head.getY() + 1);
             case RIGHT -> new Position(head.getX() + 1, head.getY());
             case LEFT -> new Position(head.getX() - 1, head.getY());
         };
-
-        // DE: Der neue Kopf wird immer vorne in die Liste gesetzt.
-        // EN: The new head is always added to the front of the list.
-        snakePosition.addFirst(newHead);
     }
 }

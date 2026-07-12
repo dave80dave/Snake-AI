@@ -17,6 +17,7 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - Erste Bewegungslogik fuer die Schlange:
   - `move(direction)` bewegt die Schlange ohne Wachstum
   - `grow(direction)` bewegt die Schlange und laesst den Schwanz erhalten
+  - `getNextHeadPosition(direction)` berechnet die naechste Kopfposition, ohne die Schlange zu veraendern
 
 ### Wichtige Lernidee
 
@@ -59,6 +60,7 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - First movement logic for the snake:
   - `move(direction)` moves the snake without growing
   - `grow(direction)` moves the snake and keeps the tail
+  - `getNextHeadPosition(direction)` calculates the next head position without changing the snake
 
 ### Important Learning Idea
 
