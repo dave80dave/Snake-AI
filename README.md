@@ -81,3 +81,12 @@ During normal movement, a new head is added to the front and the tail is removed
 - Check collision with the snake body
 - Print the playground in the terminal
 - Later: AI with self-built reinforcement learning or Q-learning
+
+
+---
+
+## Lizenz / License
+
+Deutsch: Dieses Projekt steht unter der MIT-Lizenz. Details stehen in der Datei `LICENSE`.
+
+English: This project is licensed under the MIT License. Details are available in the `LICENSE` file.
