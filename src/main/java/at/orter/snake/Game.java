@@ -7,6 +7,9 @@ public class Game {
     private final Playground playground;
     private final Snake snake;
     private final Food food;
+    // DE: Score gehoert zum Spielzustand und startet bei 0.
+    // EN: Score belongs to the game state and starts at 0.
+    private final Score gameScore = new Score(0);
     // DE: Speichert die Richtung, die beim naechsten Tick ausgefuehrt wird.
     // EN: Stores the direction that will be used on the next tick.
     private Direction currentDirection = Direction.RIGHT;
@@ -62,6 +65,7 @@ public class Game {
 
         if (willGrow) {
             snake.grow(currentDirection);
+            gameScore.growScore();
         } else {
             snake.move(currentDirection);
         }
@@ -127,5 +131,9 @@ public class Game {
 
     public void setCurrentDirection(Direction currentDirection) {
         this.currentDirection = currentDirection;
+    }
+
+    public int getScore() {
+        return gameScore.getScore();
     }
 }

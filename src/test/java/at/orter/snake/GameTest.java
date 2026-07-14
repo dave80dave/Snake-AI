@@ -87,4 +87,17 @@ class GameTest {
         assertEquals(new Position(5, 5), snake.getSnakePosition().getFirst());
     }
 
+
+    @Test
+    void scoreIncreasesWhenSnakeEatsApple() {
+        Playground playground = new Playground(26, 25);
+        Snake snake = new Snake(new Position(5, 5));
+        Food food = new Food(new Position(6, 5));
+        Game game = new Game(playground, snake, food);
+
+        game.tick();
+
+        assertEquals(1, game.getScore());
+    }
+
 }
