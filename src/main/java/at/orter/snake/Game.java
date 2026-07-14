@@ -1,5 +1,7 @@
 package at.orter.snake;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Game {
@@ -122,6 +124,21 @@ public class Game {
         } while (snake.getSnakePosition().contains(newFood));
 
         food.setApplePosition(newFood);
+    }
+
+    public void resetGame() {
+        // DE: Reset startet eine neue Runde, nachdem Game Over erkannt wurde.
+        // EN: Reset starts a new round after game over was detected.
+        Position startPosition = new Position(playground.getWidth() / 2, playground.getHeight() / 2);
+
+        // DE: Die Snake bleibt auch mit nur einem Feld eine Liste von Positionen.
+        // EN: Even with only one field, the snake is still a list of positions.
+        snake.setSnake(new ArrayList<>(List.of(startPosition)));
+
+        gameScore.setScore(0);
+        currentDirection = Direction.RIGHT;
+        gameOver = false;
+        placeNewFood();
     }
 
     public Playground getPlayground() {
