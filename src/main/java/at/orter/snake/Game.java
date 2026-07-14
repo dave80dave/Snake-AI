@@ -42,16 +42,25 @@ public class Game {
     }
 
     public void tick() {
-        // DE: Ein Tick prueft zuerst die Wand, danach den Apfel.
-        // EN: One tick checks the wall first, then the apple.
+        // DE: Ein Tick prueft zuerst Kollisionen und entscheidet danach zwischen Wachsen und Bewegen.
+        // EN: One tick checks collisions first and then decides between growing and moving.
         Position nextHead = snake.getNextHeadPosition(currentDirection);
+        Position applePosition = food.getApplePosition();
+        boolean willGrow = nextHead.equals(applePosition);
+
         if (isOutsidePlayground(nextHead)) {
             gameOver = true;
             return;
         }
-        Position applePosition = food.getApplePosition();
 
-        if (nextHead.equals(applePosition)) {
+        // DE: Selbst-Kollision muss wissen, ob der Schwanz in diesem Tick verschwindet.
+        // EN: Self-collision must know whether the tail disappears during this tick.
+        if (collidesWithSnake(nextHead, willGrow)) {
+            gameOver = true;
+            return;
+        }
+
+        if (willGrow) {
             snake.grow(currentDirection);
         } else {
             snake.move(currentDirection);
@@ -72,6 +81,23 @@ public class Game {
             return true;
         }
 
+        return false;
+    }
+
+    private boolean collidesWithSnake(Position position, boolean willGrow) {
+        // DE: Beim Wachsen bleibt der Schwanz liegen, deshalb zaehlt die ganze Schlange.
+        // EN: When growing, the tail stays, so the whole snake counts.
+        if (willGrow) {
+            return snake.getSnakePosition().contains(position);
+        }
+        // DE: Ohne Wachstum wird der Schwanz entfernt, deshalb wird das letzte Element ignoriert.
+        // EN: Without growth, the tail is removed, so the last element is ignored.
+        for (int i = 0; i < snake.getSnakePosition().size() - 1; i++) {
+            Position bodyPart = snake.getSnakePosition().get(i);
+            if (bodyPart.equals(position)) {
+                return true;
+            }
+        }
         return false;
     }
 

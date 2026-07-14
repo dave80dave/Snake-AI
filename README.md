@@ -37,7 +37,7 @@ Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwan
 - direkte Gegenrichtungen werden in `changeDirection(...)` blockiert
 - Apfelposition wird mit der naechsten Kopfposition verglichen
 - Wandkollision setzt `gameOver` und verhindert Bewegung aus dem Spielfeld
-- Kollision mit dem eigenen Koerper pruefen
+- Selbst-Kollision setzt `gameOver`, wenn die naechste Kopfposition den Koerper trifft
 - Spielfeld im Terminal anzeigen
 - Danach: AI mit selbst gebautem Reinforcement Learning oder Q-Learning
 
@@ -80,7 +80,7 @@ During normal movement, a new head is added to the front and the tail is removed
 - direct opposite directions are blocked in `changeDirection(...)`
 - Apple position is compared with the next head position
 - Wall collision sets `gameOver` and prevents movement outside the playground
-- Check collision with the snake body
+- Self-collision sets `gameOver` when the next head position hits the snake body
 - Print the playground in the terminal
 - Later: AI with self-built reinforcement learning or Q-learning
 

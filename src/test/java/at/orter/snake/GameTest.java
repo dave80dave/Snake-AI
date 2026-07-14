@@ -2,6 +2,8 @@ package at.orter.snake;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,4 +65,26 @@ class GameTest {
         assertFalse(game.isGameOver());
         assertEquals(new Position(49, 24), snake.getSnakePosition().getFirst());
     }
+
+    @Test
+    void tickSetsGameOverWhenSnakeWouldHitItself() {
+        Playground playground = new Playground(10, 10);
+        Snake snake = new Snake(new Position(5, 5));
+        snake.setSnake(List.of(
+                new Position(5, 5),
+                new Position(6, 5),
+                new Position(6, 6),
+                new Position(5, 6),
+                new Position(4, 6)
+        ));
+        Food food = new Food(new Position(9, 9));
+        Game game = new Game(playground, snake, food);
+
+        game.changeDirection(Direction.DOWN);
+        game.tick();
+
+        assertTrue(game.isGameOver());
+        assertEquals(new Position(5, 5), snake.getSnakePosition().getFirst());
+    }
+
 }
