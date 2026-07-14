@@ -1,5 +1,6 @@
 package at.orter.snake;
 
+import java.util.Random;
 
 public class Game {
     // DE: Game verbindet die wichtigsten Teile des Spiels.
@@ -17,6 +18,10 @@ public class Game {
     // DE: Merkt sich, ob das Spiel durch eine Kollision beendet wurde.
     // EN: Stores whether the game ended because of a collision.
     private boolean gameOver = false;
+
+    // DE: Random erzeugt neue zufaellige Apfelpositionen.
+    // EN: Random creates new random apple positions.
+    private final Random random = new Random();
 
     public Game(Playground playground, Snake snake, Food food) {
         // DE: Die Objekte werden von aussen uebergeben, damit Game mit ihnen arbeiten kann.
@@ -66,6 +71,7 @@ public class Game {
         if (willGrow) {
             snake.grow(currentDirection);
             gameScore.growScore();
+            placeNewFood();
         } else {
             snake.move(currentDirection);
         }
@@ -103,6 +109,19 @@ public class Game {
             }
         }
         return false;
+    }
+
+    private void placeNewFood() {
+        // DE: Sucht so lange eine neue Position, bis sie nicht in der Schlange liegt.
+        // EN: Keeps searching for a new position until it is not inside the snake.
+        Position newFood;
+        do {
+            int x = random.nextInt(0, playground.getWidth());
+            int y = random.nextInt(0, playground.getHeight());
+            newFood = new Position(x, y);
+        } while (snake.getSnakePosition().contains(newFood));
+
+        food.setApplePosition(newFood);
     }
 
     public Playground getPlayground() {

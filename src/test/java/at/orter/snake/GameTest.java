@@ -2,6 +2,7 @@ package at.orter.snake;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -98,6 +99,24 @@ class GameTest {
         game.tick();
 
         assertEquals(1, game.getScore());
+    }
+
+
+    @Test
+    void newAppleIsPlacedOnFreePositionAfterEating() {
+        Playground playground = new Playground(2, 2);
+        Snake snake = new Snake(new Position(0, 0));
+        snake.setSnake(new ArrayList<>(List.of(
+                new Position(0, 0),
+                new Position(0, 1)
+        )));
+        Food food = new Food(new Position(1, 0));
+        Game game = new Game(playground, snake, food);
+
+        game.tick();
+
+        assertEquals(new Position(1, 1), food.getApplePosition());
+        assertFalse(snake.getSnakePosition().contains(food.getApplePosition()));
     }
 
 }

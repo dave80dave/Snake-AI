@@ -3,17 +3,18 @@ package at.orter.snake;
 public class Food {
     // DE: Die Position des Apfels auf dem Spielfeld.
     // EN: The position of the apple on the playground.
-    private Position applePosition;
+    private Position foodPosition;
 
-    public Food(Position applePosition) {
-        this.applePosition = applePosition;
+    public Food(Position foodPosition) {
+        this.foodPosition = foodPosition;
     }
 
     public Position getApplePosition() {
-        return applePosition;
+        return foodPosition;
     }
 
-    public void setApplePosition(Position applePosition) {
-        this.applePosition = applePosition;
+    public void setApplePosition(Position foodPosition) {
+        this.foodPosition = foodPosition;
     }
+
 }
