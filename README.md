@@ -13,12 +13,16 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - Futterklasse `Food` mit einer einzelnen Apfelposition
 - Spielcontainer `Game`
 - Bewegungsrichtungen als `Direction` enum
+- Erste AI-Klasse `SnakeAi`
 - Zweisprachige Lernkommentare im Quellcode
 - JUnit-Teststruktur fuer zentrale Spiellogik
 - Erste Bewegungslogik fuer die Schlange:
   - `move(direction)` bewegt die Schlange ohne Wachstum
   - `grow(direction)` bewegt die Schlange und laesst den Schwanz erhalten
   - `getNextHeadPosition(direction)` berechnet die naechste Kopfposition, ohne die Schlange zu veraendern
+- Erste AI-Logik:
+  - `getPossibleDirections(currentDirection)` gibt die Richtungen zurueck, die keine direkte Gegenrichtung sind
+  - `collidesWithWall(playground, direction, snake)` prueft, ob die naechste Kopfposition ausserhalb des Spielfelds waere
 
 ### Wichtige Lernidee
 
@@ -43,7 +47,8 @@ Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwan
 - `resetGame()` setzt Snake, Score, Richtung, Game Over und Apfel zurueck
 - Kleines Demo-Spiel in `Main`, um Tick, Score, Food und Reset im Terminal zu beobachten
 - Spielfeld im Terminal grafisch anzeigen
-- Danach: AI mit selbst gebautem Reinforcement Learning oder Q-Learning
+- Danach: AI erweitert sichere Richtungen um Koerperkollision und Apfelnaehe
+- Spaeter: AI mit selbst gebautem Reinforcement Learning oder Q-Learning
 
 ---
 
@@ -60,12 +65,16 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - Food class `Food` with one single apple position
 - Game container `Game`
 - Movement directions as a `Direction` enum
+- First AI class `SnakeAi`
 - Bilingual learning comments in the source code
 - JUnit test setup for core game logic
 - First movement logic for the snake:
   - `move(direction)` moves the snake without growing
   - `grow(direction)` moves the snake and keeps the tail
   - `getNextHeadPosition(direction)` calculates the next head position without changing the snake
+- First AI logic:
+  - `getPossibleDirections(currentDirection)` returns the directions that are not direct opposites
+  - `collidesWithWall(playground, direction, snake)` checks whether the next head position would be outside the playground
 
 ### Important Learning Idea
 
@@ -90,6 +99,7 @@ During normal movement, a new head is added to the front and the tail is removed
 - `resetGame()` resets snake, score, direction, game over, and apple
 - Small demo game in `Main` to observe tick, score, food, and reset in the terminal
 - Print the playground graphically in the terminal
+- Next: AI extends safe directions with body collision and apple distance
 - Later: AI with self-built reinforcement learning or Q-learning
 
 
