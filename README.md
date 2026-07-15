@@ -23,6 +23,8 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - Erste AI-Logik:
   - `getPossibleDirections(currentDirection)` gibt die Richtungen zurueck, die keine direkte Gegenrichtung sind
   - `collidesWithWall(playground, direction, snake)` prueft, ob die naechste Kopfposition ausserhalb des Spielfelds waere
+  - `willGrow(direction, snake, food)` prueft, ob die Schlange im naechsten Schritt den Apfel essen wuerde
+  - `collidesWithSnake(direction, snake, food)` prueft Selbstkollision inklusive Schwanz-Ausnahme
 
 ### Wichtige Lernidee
 
@@ -47,7 +49,8 @@ Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwan
 - `resetGame()` setzt Snake, Score, Richtung, Game Over und Apfel zurueck
 - Kleines Demo-Spiel in `Main`, um Tick, Score, Food und Reset im Terminal zu beobachten
 - Spielfeld im Terminal grafisch anzeigen
-- Danach: AI erweitert sichere Richtungen um Koerperkollision und Apfelnaehe
+- Danach: AI kombiniert moegliche Richtungen mit Wand- und Koerperkollision
+- Danach: AI bewertet sichere Richtungen nach Apfelnaehe
 - Spaeter: AI mit selbst gebautem Reinforcement Learning oder Q-Learning
 
 ---
@@ -75,6 +78,8 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - First AI logic:
   - `getPossibleDirections(currentDirection)` returns the directions that are not direct opposites
   - `collidesWithWall(playground, direction, snake)` checks whether the next head position would be outside the playground
+  - `willGrow(direction, snake, food)` checks whether the snake would eat the apple on the next step
+  - `collidesWithSnake(direction, snake, food)` checks self-collision including the tail exception
 
 ### Important Learning Idea
 
@@ -99,7 +104,8 @@ During normal movement, a new head is added to the front and the tail is removed
 - `resetGame()` resets snake, score, direction, game over, and apple
 - Small demo game in `Main` to observe tick, score, food, and reset in the terminal
 - Print the playground graphically in the terminal
-- Next: AI extends safe directions with body collision and apple distance
+- Next: AI combines possible directions with wall and body collision
+- Next: AI scores safe directions by apple distance
 - Later: AI with self-built reinforcement learning or Q-learning
 
 

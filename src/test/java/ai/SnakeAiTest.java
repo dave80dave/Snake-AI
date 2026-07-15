@@ -1,10 +1,13 @@
 package ai;
 
 import at.orter.snake.Direction;
+import at.orter.snake.Food;
 import at.orter.snake.Playground;
 import at.orter.snake.Position;
 import at.orter.snake.Snake;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,5 +38,53 @@ class SnakeAiTest {
         boolean collidesWithWall = snakeAi.collidesWithWall(playground, Direction.RIGHT, snake);
 
         assertFalse(collidesWithWall);
+    }
+
+    @Test
+    void detectsSnakeBodyCollision() {
+        SnakeAi snakeAi = new SnakeAi();
+        Snake snake = new Snake(new Position(1, 1));
+        snake.setSnake(List.of(
+                new Position(1, 1),
+                new Position(2, 1),
+                new Position(3, 1)
+        ));
+        Food food = new Food(new Position(9, 9));
+
+        boolean collidesWithSnake = snakeAi.collidesWithSnake(Direction.RIGHT, snake, food);
+
+        assertTrue(collidesWithSnake);
+    }
+
+    @Test
+    void allowsMovingIntoTailWhenSnakeDoesNotGrow() {
+        SnakeAi snakeAi = new SnakeAi();
+        Snake snake = new Snake(new Position(1, 1));
+        snake.setSnake(List.of(
+                new Position(1, 1),
+                new Position(1, 0),
+                new Position(2, 1)
+        ));
+        Food food = new Food(new Position(9, 9));
+
+        boolean collidesWithSnake = snakeAi.collidesWithSnake(Direction.RIGHT, snake, food);
+
+        assertFalse(collidesWithSnake);
+    }
+
+    @Test
+    void detectsTailCollisionWhenSnakeGrows() {
+        SnakeAi snakeAi = new SnakeAi();
+        Snake snake = new Snake(new Position(1, 1));
+        snake.setSnake(List.of(
+                new Position(1, 1),
+                new Position(1, 0),
+                new Position(2, 1)
+        ));
+        Food food = new Food(new Position(2, 1));
+
+        boolean collidesWithSnake = snakeAi.collidesWithSnake(Direction.RIGHT, snake, food);
+
+        assertTrue(collidesWithSnake);
     }
 }
