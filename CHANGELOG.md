@@ -2,6 +2,11 @@
 
 ## Deutsch
 
+### v0.2.1 - Executable JAR
+
+- JAR kann direkt mit `java -jar target/Snake-AI-1.0-SNAPSHOT.jar` gestartet werden
+- README enthaelt den Build- und Startbefehl
+
 ### v0.2.0 - RandomAI Demo
 
 - Erste AI-Struktur im Package `at.orter.snake.ai`
@@ -10,8 +15,6 @@
 - `Main` zeigt eine kleine RandomAI-Demo mit Ausgabe nur bei gegessenem Apfel und Game Over
 - JUnit-Test fuer `RandomAi`
 - AI-Klassen in das Snake-Package verschoben
-- JAR kann direkt mit `java -jar target/Snake-AI-1.0-SNAPSHOT.jar` gestartet werden
-
 ### v0.1.0 - Core Game Logic
 
 - Grundlegende Snake-Spiellogik
@@ -27,6 +30,11 @@
 
 ## English
 
+### v0.2.1 - Executable JAR
+
+- JAR can be started directly with `java -jar target/Snake-AI-1.0-SNAPSHOT.jar`
+- README contains the build and run command
+
 ### v0.2.0 - RandomAI Demo
 
 - First AI structure in package `at.orter.snake.ai`
@@ -35,8 +43,6 @@
 - `Main` shows a small RandomAI demo with output only when an apple is eaten or game over happens
 - JUnit test for `RandomAi`
 - AI classes moved into the Snake package
-- JAR can be started directly with `java -jar target/Snake-AI-1.0-SNAPSHOT.jar`
-
 ### v0.1.0 - Core Game Logic
 
 - Basic Snake game logic
