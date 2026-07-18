@@ -1,4 +1,4 @@
-package ai;
+package at.orter.snake.ai;
 
 import at.orter.snake.Direction;
 import at.orter.snake.Game;

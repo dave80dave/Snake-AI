@@ -1,6 +1,6 @@
 package at.orter.snake;
 
-import ai.RandomAi;
+import at.orter.snake.ai.RandomAi;
 
 public class Main {
     public static void main(String[] args) {

@@ -5,6 +5,7 @@ import at.orter.snake.Food;
 import at.orter.snake.Playground;
 import at.orter.snake.Position;
 import at.orter.snake.Snake;
+import at.orter.snake.ai.SnakeAi;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
