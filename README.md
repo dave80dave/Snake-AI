@@ -18,7 +18,6 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - `resetGame()` setzt Snake, Score, Richtung, Game Over und Apfel zurueck
 - Wandkollision und Selbst-Kollision setzen `gameOver`
 - Direkte Gegenrichtungen werden in `changeDirection(...)` blockiert
-- Zweisprachige Lernkommentare im Quellcode
 - JUnit-Tests fuer zentrale Spiellogik und AI-Hilfslogik
 - AI-Package `at.orter.snake.ai`
 - `SnakeAi` prueft moegliche Richtungen, Wandkollision, Selbstkollision und Wachstum
@@ -74,7 +73,6 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - `resetGame()` resets snake, score, direction, game over, and apple
 - Wall collision and self-collision set `gameOver`
 - Direct opposite directions are blocked in `changeDirection(...)`
-- Bilingual learning comments in the source code
 - JUnit tests for core game logic and AI helper logic
 - AI package `at.orter.snake.ai`
 - `SnakeAi` checks possible directions, wall collision, self-collision, and growth
