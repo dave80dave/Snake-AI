@@ -110,6 +110,14 @@ The AI does not move the snake directly. It only decides one direction. The game
 
 ---
 
+## Releases
+
+Deutsch: Die bisherigen Meilensteine stehen in `CHANGELOG.md`. Aktuelle Tags: `v0.1.0` fuer die Spiellogik und `v0.2.0` fuer die RandomAI-Demo.
+
+English: The current milestones are listed in `CHANGELOG.md`. Current tags: `v0.1.0` for game logic and `v0.2.0` for the RandomAI demo.
+
+---
+
 ## Lizenz / License
 
 Deutsch: Dieses Projekt steht unter der MIT-Lizenz. Details stehen in der Datei `LICENSE`.
