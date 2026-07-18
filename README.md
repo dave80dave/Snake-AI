@@ -7,26 +7,23 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 ### Aktueller Stand
 
 - Maven/Java-Projekt mit Package `at.orter.snake`
-- Spielfeldklasse `Playground`
-- Positionsklasse `Position` mit Wertevergleich ueber `equals(...)`
+- Spielfeldklasse `Playground` mit Breite und Hoehe
+- Positionsklasse `Position` mit Wertevergleich ueber `equals(...)` und `hashCode()`
 - Schlange als Liste von Positionen in `Snake`
 - Futterklasse `Food` mit einer einzelnen Apfelposition
-- Spielcontainer `Game`
+- Spielcontainer `Game` fuer Tick, Richtung, Kollisionen, Score, Food und Reset
 - Bewegungsrichtungen als `Direction` enum
-- Erste AI-Klasse `SnakeAi`
-- Erste zufaellige AI-Klasse `RandomAi`
+- Score startet bei 0 und steigt beim Essen eines Apfels
+- Nach dem Essen wird ein neuer Apfel auf einer freien Position gesetzt
+- `resetGame()` setzt Snake, Score, Richtung, Game Over und Apfel zurueck
+- Wandkollision und Selbst-Kollision setzen `gameOver`
+- Direkte Gegenrichtungen werden in `changeDirection(...)` blockiert
 - Zweisprachige Lernkommentare im Quellcode
-- JUnit-Teststruktur fuer zentrale Spiellogik
-- Erste Bewegungslogik fuer die Schlange:
-  - `move(direction)` bewegt die Schlange ohne Wachstum
-  - `grow(direction)` bewegt die Schlange und laesst den Schwanz erhalten
-  - `getNextHeadPosition(direction)` berechnet die naechste Kopfposition, ohne die Schlange zu veraendern
-- Erste AI-Logik:
-  - `getPossibleDirections(currentDirection)` gibt die Richtungen zurueck, die keine direkte Gegenrichtung sind
-  - `collidesWithWall(playground, direction, snake)` prueft, ob die naechste Kopfposition ausserhalb des Spielfelds waere
-  - `willGrow(direction, snake, food)` prueft, ob die Schlange im naechsten Schritt den Apfel essen wuerde
-  - `collidesWithSnake(direction, snake, food)` prueft Selbstkollision inklusive Schwanz-Ausnahme
-  - `RandomAi.chooseDirection(game)` waehlt zufaellig eine sichere Richtung, wenn eine sichere Richtung existiert
+- JUnit-Tests fuer zentrale Spiellogik und AI-Hilfslogik
+- AI-Package `at.orter.snake.ai`
+- `SnakeAi` prueft moegliche Richtungen, Wandkollision, Selbstkollision und Wachstum
+- `RandomAi` waehlt zufaellig eine sichere Richtung, wenn eine sichere Richtung existiert
+- Kleines RandomAI-Demo-Spiel in `Main`, das nur Essen und Game Over ausgibt
 
 ### Wichtige Lernidee
 
@@ -38,21 +35,24 @@ Die Schlange ist eine Liste von Positionen:
 
 Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwanz entfernt. Beim Wachsen wird vorne ein neuer Kopf eingefuegt, aber der Schwanz bleibt erhalten.
 
+### AI-Ablauf
+
+```text
+RandomAi waehlt Direction
+Main ruft game.changeDirection(direction) auf
+Main ruft game.tick() auf
+Game prueft Regeln und bewegt die Snake
+```
+
+Die AI bewegt die Snake nicht direkt. Sie entscheidet nur eine Richtung. Die Spielregeln bleiben in `Game`.
+
 ### Naechste Schritte
 
-- `Game` speichert die aktuelle Richtung
-- `tick()` prueft Wandkollision und entscheidet danach zwischen Wachstum und normaler Bewegung
-- direkte Gegenrichtungen werden in `changeDirection(...)` blockiert
-- Apfelposition wird mit der naechsten Kopfposition verglichen
-- Wandkollision setzt `gameOver` und verhindert Bewegung aus dem Spielfeld
-- Selbst-Kollision setzt `gameOver`, wenn die naechste Kopfposition den Koerper trifft
-- Score startet bei 0 und steigt beim Essen eines Apfels
-- Nach dem Essen wird ein neuer Apfel auf einer freien Position gesetzt
-- `resetGame()` setzt Snake, Score, Richtung, Game Over und Apfel zurueck
-- Kleines RandomAI-Demo-Spiel in `Main`, um Richtung, Tick, Score und Game Over im Terminal zu beobachten
 - Spielfeld im Terminal grafisch anzeigen
-- Danach: Neue `AppleSeekingAi` bewertet sichere Richtungen nach Apfelnaehe
-- Spaeter: AI mit selbst gebautem Reinforcement Learning oder Q-Learning
+- Neue `AppleSeekingAi` erstellen, die sichere Richtungen nach Apfelnaehe bewertet
+- Tests fuer `AppleSeekingAi` schreiben
+- Danach: erste lernende AI vorbereiten mit State, Reward und Q-Learning
+- Spaeter: Spring-Boot-Backend, MySQL und React-Frontend planen
 
 ---
 
@@ -63,26 +63,23 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 ### Current Status
 
 - Maven/Java project with package `at.orter.snake`
-- Playground class `Playground`
-- Position class `Position` with value comparison through `equals(...)`
+- Playground class `Playground` with width and height
+- Position class `Position` with value comparison through `equals(...)` and `hashCode()`
 - Snake stored as a list of positions in `Snake`
 - Food class `Food` with one single apple position
-- Game container `Game`
+- Game container `Game` for tick, direction, collisions, score, food, and reset
 - Movement directions as a `Direction` enum
-- First AI class `SnakeAi`
-- First random AI class `RandomAi`
+- Score starts at 0 and increases when an apple is eaten
+- After eating, a new apple is placed on a free position
+- `resetGame()` resets snake, score, direction, game over, and apple
+- Wall collision and self-collision set `gameOver`
+- Direct opposite directions are blocked in `changeDirection(...)`
 - Bilingual learning comments in the source code
-- JUnit test setup for core game logic
-- First movement logic for the snake:
-  - `move(direction)` moves the snake without growing
-  - `grow(direction)` moves the snake and keeps the tail
-  - `getNextHeadPosition(direction)` calculates the next head position without changing the snake
-- First AI logic:
-  - `getPossibleDirections(currentDirection)` returns the directions that are not direct opposites
-  - `collidesWithWall(playground, direction, snake)` checks whether the next head position would be outside the playground
-  - `willGrow(direction, snake, food)` checks whether the snake would eat the apple on the next step
-  - `collidesWithSnake(direction, snake, food)` checks self-collision including the tail exception
-  - `RandomAi.chooseDirection(game)` randomly chooses a safe direction if a safe direction exists
+- JUnit tests for core game logic and AI helper logic
+- AI package `at.orter.snake.ai`
+- `SnakeAi` checks possible directions, wall collision, self-collision, and growth
+- `RandomAi` randomly chooses a safe direction if a safe direction exists
+- Small RandomAI demo game in `Main` that only prints eating events and game over
 
 ### Important Learning Idea
 
@@ -94,22 +91,24 @@ The snake is a list of positions:
 
 During normal movement, a new head is added to the front and the tail is removed from the back. When the snake grows, a new head is added to the front, but the tail stays in the list.
 
+### AI Flow
+
+```text
+RandomAi chooses Direction
+Main calls game.changeDirection(direction)
+Main calls game.tick()
+Game checks the rules and moves the snake
+```
+
+The AI does not move the snake directly. It only decides one direction. The game rules stay in `Game`.
+
 ### Next Steps
 
-- `Game` stores the current direction
-- `tick()` checks wall collision and then decides between growth and normal movement
-- direct opposite directions are blocked in `changeDirection(...)`
-- Apple position is compared with the next head position
-- Wall collision sets `gameOver` and prevents movement outside the playground
-- Self-collision sets `gameOver` when the next head position hits the snake body
-- Score starts at 0 and increases when an apple is eaten
-- After eating, a new apple is placed on a free position
-- `resetGame()` resets snake, score, direction, game over, and apple
-- Small RandomAI demo game in `Main` to observe direction, tick, score, and game over in the terminal
 - Print the playground graphically in the terminal
-- Next: A new `AppleSeekingAi` scores safe directions by apple distance
-- Later: AI with self-built reinforcement learning or Q-learning
-
+- Create a new `AppleSeekingAi` that scores safe directions by apple distance
+- Write tests for `AppleSeekingAi`
+- After that: prepare the first learning AI with state, reward, and Q-learning
+- Later: plan Spring Boot backend, MySQL, and React frontend
 
 ---
 
