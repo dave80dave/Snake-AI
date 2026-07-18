@@ -1,47 +1,62 @@
 package at.orter.snake;
 
+import ai.RandomAi;
+
 public class Main {
     public static void main(String[] args) {
-        // DE: Dieses kleine Demo-Spiel laeuft automatisch, damit wir die Logik im Terminal sehen.
-        // EN: This small demo game runs automatically so we can see the logic in the terminal.
-        Playground playground = new Playground(30, 30);
-        Snake snake = new Snake(new Position(5, 5));
-        Food food = new Food(new Position(7, 5));
-        Game game = new Game(playground, snake, food);
+        RandomAi randomAi = new RandomAi();
+        Game game = new Game(
+                new Playground(10, 10),
+                new Snake(new Position(1, 1)),
+                new Food(new Position(2, 1))
+        );
 
-        runDemoRound(game);
+        int lastScore = game.getScore();
 
-        // DE: Nach Game Over entscheidet Main, wann ein Reset passiert.
-        // EN: After game over, Main decides when a reset happens.
+        // DE: Der erste Apfel liegt direkt vor der Snake, damit Wachstum in der Demo sichtbar wird.
+        // EN: The first apple is directly in front of the snake so growth is visible in the demo.
+        game.tick();
+        lastScore = printImportantGameState(1, game.getCurrentDirection(), game, lastScore);
 
-        System.out.println("Game Over: " + game.isGameOver());
-        System.out.println("Score before reset: " + game.getScore());
-        System.out.println("Head before reset: " + game.getSnake().getSnakePosition().getFirst());
+        // DE: Danach uebernimmt RandomAi fuer maximal 100000 weitere Ticks oder bis Game Over erreicht ist.
+        // EN: After that, RandomAi takes over for at most 100000 more ticks or until game over is reached.
+        for (int i = 0; i < 100000 && !game.isGameOver(); i++) {
+            Direction direction = randomAi.chooseDirection(game);
 
-        game.resetGame();
+            // DE: Main uebergibt die AI-Entscheidung an Game, danach passiert ein Tick.
+            // EN: Main passes the AI decision to Game, then one tick happens.
+            game.changeDirection(direction);
+            game.tick();
 
-        System.out.println("--- Reset ---");
-        System.out.println("Game Over: " + game.isGameOver());
-        System.out.println("Score after reset: " + game.getScore());
-        System.out.println("Head after reset: " + game.getSnake().getSnakePosition().getFirst());
-        System.out.println("Food after reset: " + game.getFood().getApplePosition());
+            lastScore = printImportantGameState(i + 2, direction, game, lastScore);
+        }
     }
 
-    private static void runDemoRound(Game game) {
-        // DE: Die Schleife ruft tick() auf, bis Game eine Kollision meldet.
-        // EN: The loop calls tick() until Game reports a collision.
-        int tickCount = 0;
+    private static int printImportantGameState(int tick, Direction direction, Game game, int lastScore) {
+        // DE: Ausgabe erfolgt nur, wenn ein Apfel gegessen wurde oder das Spiel endet.
+        // EN: Output only happens when an apple was eaten or the game ends.
+        boolean hasEaten = game.getScore() > lastScore;
 
-        while (!game.isGameOver()) {
-            game.tick();
-            tickCount++;
-
-            System.out.println("Tick: " + tickCount);
-            System.out.println("Head: " + game.getSnake().getSnakePosition().getFirst());
-            System.out.println("Length: " + game.getSnake().getSnakePosition().size());
-            System.out.println("Score: " + game.getScore());
-            System.out.println("Food: " + game.getFood().getApplePosition());
-            System.out.println();
+        if (!hasEaten && !game.isGameOver()) {
+            return lastScore;
         }
+
+        if (hasEaten) {
+            System.out.println("Apple eaten");
+        }
+
+        if (game.isGameOver()) {
+            System.out.println("Game Over");
+        }
+
+        System.out.println("Tick: " + tick);
+        System.out.println("Direction: " + direction);
+        System.out.println("Head: " + game.getSnake().getSnakePosition().getFirst());
+        System.out.println("Length: " + game.getSnake().getSnakePosition().size());
+        System.out.println("Score: " + game.getScore());
+        System.out.println("Food: " + game.getFood().getApplePosition());
+        System.out.println();
+
+        return game.getScore();
     }
 }

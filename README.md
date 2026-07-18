@@ -13,12 +13,20 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - Futterklasse `Food` mit einer einzelnen Apfelposition
 - Spielcontainer `Game`
 - Bewegungsrichtungen als `Direction` enum
+- Erste AI-Klasse `SnakeAi`
+- Erste zufaellige AI-Klasse `RandomAi`
 - Zweisprachige Lernkommentare im Quellcode
 - JUnit-Teststruktur fuer zentrale Spiellogik
 - Erste Bewegungslogik fuer die Schlange:
   - `move(direction)` bewegt die Schlange ohne Wachstum
   - `grow(direction)` bewegt die Schlange und laesst den Schwanz erhalten
   - `getNextHeadPosition(direction)` berechnet die naechste Kopfposition, ohne die Schlange zu veraendern
+- Erste AI-Logik:
+  - `getPossibleDirections(currentDirection)` gibt die Richtungen zurueck, die keine direkte Gegenrichtung sind
+  - `collidesWithWall(playground, direction, snake)` prueft, ob die naechste Kopfposition ausserhalb des Spielfelds waere
+  - `willGrow(direction, snake, food)` prueft, ob die Schlange im naechsten Schritt den Apfel essen wuerde
+  - `collidesWithSnake(direction, snake, food)` prueft Selbstkollision inklusive Schwanz-Ausnahme
+  - `RandomAi.chooseDirection(game)` waehlt zufaellig eine sichere Richtung, wenn eine sichere Richtung existiert
 
 ### Wichtige Lernidee
 
@@ -41,9 +49,10 @@ Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwan
 - Score startet bei 0 und steigt beim Essen eines Apfels
 - Nach dem Essen wird ein neuer Apfel auf einer freien Position gesetzt
 - `resetGame()` setzt Snake, Score, Richtung, Game Over und Apfel zurueck
-- Kleines Demo-Spiel in `Main`, um Tick, Score, Food und Reset im Terminal zu beobachten
+- Kleines RandomAI-Demo-Spiel in `Main`, um Richtung, Tick, Score und Game Over im Terminal zu beobachten
 - Spielfeld im Terminal grafisch anzeigen
-- Danach: AI mit selbst gebautem Reinforcement Learning oder Q-Learning
+- Danach: Neue `AppleSeekingAi` bewertet sichere Richtungen nach Apfelnaehe
+- Spaeter: AI mit selbst gebautem Reinforcement Learning oder Q-Learning
 
 ---
 
@@ -60,12 +69,20 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - Food class `Food` with one single apple position
 - Game container `Game`
 - Movement directions as a `Direction` enum
+- First AI class `SnakeAi`
+- First random AI class `RandomAi`
 - Bilingual learning comments in the source code
 - JUnit test setup for core game logic
 - First movement logic for the snake:
   - `move(direction)` moves the snake without growing
   - `grow(direction)` moves the snake and keeps the tail
   - `getNextHeadPosition(direction)` calculates the next head position without changing the snake
+- First AI logic:
+  - `getPossibleDirections(currentDirection)` returns the directions that are not direct opposites
+  - `collidesWithWall(playground, direction, snake)` checks whether the next head position would be outside the playground
+  - `willGrow(direction, snake, food)` checks whether the snake would eat the apple on the next step
+  - `collidesWithSnake(direction, snake, food)` checks self-collision including the tail exception
+  - `RandomAi.chooseDirection(game)` randomly chooses a safe direction if a safe direction exists
 
 ### Important Learning Idea
 
@@ -88,8 +105,9 @@ During normal movement, a new head is added to the front and the tail is removed
 - Score starts at 0 and increases when an apple is eaten
 - After eating, a new apple is placed on a free position
 - `resetGame()` resets snake, score, direction, game over, and apple
-- Small demo game in `Main` to observe tick, score, food, and reset in the terminal
+- Small RandomAI demo game in `Main` to observe direction, tick, score, and game over in the terminal
 - Print the playground graphically in the terminal
+- Next: A new `AppleSeekingAi` scores safe directions by apple distance
 - Later: AI with self-built reinforcement learning or Q-learning
 
 
