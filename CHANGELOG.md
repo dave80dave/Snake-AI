@@ -10,6 +10,7 @@
 - `Main` zeigt eine kleine RandomAI-Demo mit Ausgabe nur bei gegessenem Apfel und Game Over
 - JUnit-Test fuer `RandomAi`
 - AI-Klassen in das Snake-Package verschoben
+- JAR kann direkt mit `java -jar target/Snake-AI-1.0-SNAPSHOT.jar` gestartet werden
 
 ### v0.1.0 - Core Game Logic
 
@@ -34,6 +35,7 @@
 - `Main` shows a small RandomAI demo with output only when an apple is eaten or game over happens
 - JUnit test for `RandomAi`
 - AI classes moved into the Snake package
+- JAR can be started directly with `java -jar target/Snake-AI-1.0-SNAPSHOT.jar`
 
 ### v0.1.0 - Core Game Logic
 

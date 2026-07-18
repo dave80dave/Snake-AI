@@ -110,6 +110,24 @@ The AI does not move the snake directly. It only decides one direction. The game
 
 ---
 
+## Ausfuehren / Run
+
+Deutsch:
+
+```bash
+mvn package
+java -jar target/Snake-AI-1.0-SNAPSHOT.jar
+```
+
+English:
+
+```bash
+mvn package
+java -jar target/Snake-AI-1.0-SNAPSHOT.jar
+```
+
+---
+
 ## Releases
 
 Deutsch: Die bisherigen Meilensteine stehen in `CHANGELOG.md`. Aktuelle Tags: `v0.1.0` fuer die Spiellogik und `v0.2.0` fuer die RandomAI-Demo.
