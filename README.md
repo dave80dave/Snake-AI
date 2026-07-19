@@ -23,6 +23,8 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - `SnakeAi` prueft moegliche Richtungen, Wandkollision, Selbstkollision und Wachstum
 - `RandomAi` waehlt zufaellig eine sichere Richtung, wenn eine sichere Richtung existiert
 - Kleines RandomAI-Demo-Spiel in `Main`, das nur Essen und Game Over ausgibt
+- Erster Q-Learning-Baustein `SnakeState` speichert Gefahren- und Apfelinformationen
+- `SnakeState` besitzt Wertevergleich und Hashcode fuer die spaetere Verwendung als Q-Tabellen-Schluessel
 
 ### Wichtige Lernidee
 
@@ -50,7 +52,8 @@ Die AI bewegt die Snake nicht direkt. Sie entscheidet nur eine Richtung. Die Spi
 - Spielfeld im Terminal grafisch anzeigen
 - Neue `AppleSeekingAi` erstellen, die sichere Richtungen nach Apfelnaehe bewertet
 - Tests fuer `AppleSeekingAi` schreiben
-- Danach: erste lernende AI vorbereiten mit State, Reward und Q-Learning
+- `StateReader` erstellen, der aus einem laufenden Spiel einen `SnakeState` erzeugt
+- Danach relative Aktionen, Reward und Q-Tabelle schrittweise einfuehren
 - Spaeter: Spring-Boot-Backend, MySQL und React-Frontend planen
 
 ---
@@ -78,6 +81,8 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - `SnakeAi` checks possible directions, wall collision, self-collision, and growth
 - `RandomAi` randomly chooses a safe direction if a safe direction exists
 - Small RandomAI demo game in `Main` that only prints eating events and game over
+- First Q-learning building block `SnakeState` stores danger and apple information
+- `SnakeState` provides value equality and a hash code for later use as a Q-table key
 
 ### Important Learning Idea
 
@@ -105,7 +110,8 @@ The AI does not move the snake directly. It only decides one direction. The game
 - Print the playground graphically in the terminal
 - Create a new `AppleSeekingAi` that scores safe directions by apple distance
 - Write tests for `AppleSeekingAi`
-- After that: prepare the first learning AI with state, reward, and Q-learning
+- Create a `StateReader` that produces a `SnakeState` from a running game
+- Then introduce relative actions, rewards, and the Q-table step by step
 - Later: plan Spring Boot backend, MySQL, and React frontend
 
 ---
