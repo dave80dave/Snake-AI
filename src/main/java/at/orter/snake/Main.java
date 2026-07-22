@@ -1,62 +1,69 @@
 package at.orter.snake;
 
-import at.orter.snake.ai.RandomAi;
+import at.orter.snake.ai.QTable;
+import at.orter.snake.ai.RelativeAction;
+import at.orter.snake.ai.SnakeState;
 
 public class Main {
     public static void main(String[] args) {
-        RandomAi randomAi = new RandomAi();
-        Game game = new Game(
-                new Playground(10, 10),
-                new Snake(new Position(1, 1)),
-                new Food(new Position(2, 1))
+        QTable qTable = new QTable();
+
+        // DE: Dieser Beispiel-State beschreibt eine Situation mit Gefahr geradeaus.
+        //     Links und rechts sind frei, der Apfel liegt oberhalb und rechts.
+        // EN: This example state describes danger straight ahead. Left and right
+        //     are safe, while the apple is above and to the right.
+        SnakeState state = new SnakeState(
+                true,
+                false,
+                false,
+                true,
+                false,
+                false,
+                true
         );
 
-        int lastScore = game.getScore();
+        System.out.println("=== Q-Table Demo ===");
+        System.out.println();
+        System.out.println("Situation:");
+        printState(state);
 
-        // DE: Der erste Apfel liegt direkt vor der Snake, damit Wachstum in der Demo sichtbar wird.
-        // EN: The first apple is directly in front of the snake so growth is visible in the demo.
-        game.tick();
-        lastScore = printImportantGameState(1, game.getCurrentDirection(), game, lastScore);
+        // DE: Ein unbekannter State startet fuer jede Action mit dem Q-Wert 0.0.
+        // EN: An unknown state starts with a Q-value of 0.0 for every action.
+        System.out.println();
+        System.out.println("Q-values before learning:");
+        printQValues(qTable, state);
 
-        // DE: Danach uebernimmt RandomAi fuer maximal 100000 weitere Ticks oder bis Game Over erreicht ist.
-        // EN: After that, RandomAi takes over for at most 100000 more ticks or until game over is reached.
-        for (int i = 0; i < 100000 && !game.isGameOver(); i++) {
-            Direction direction = randomAi.chooseDirection(game);
+        // DE: Diese Beispielwerte stellen bereits gesammelte Lernerfahrungen dar.
+        //     Geradeaus fuehrte zum Tod, links war gut und rechts nur leicht negativ.
+        // EN: These example values represent learned experience. Going straight
+        //     caused death, left was good, and right was only slightly negative.
+        qTable.setQValue(state, RelativeAction.STRAIGHT, -100.0);
+        qTable.setQValue(state, RelativeAction.TURN_LEFT, 10.0);
+        qTable.setQValue(state, RelativeAction.TURN_RIGHT, -0.1);
 
-            // DE: Main uebergibt die AI-Entscheidung an Game, danach passiert ein Tick.
-            // EN: Main passes the AI decision to Game, then one tick happens.
-            game.changeDirection(direction);
-            game.tick();
+        System.out.println();
+        System.out.println("Q-values after learning:");
+        printQValues(qTable, state);
 
-            lastScore = printImportantGameState(i + 2, direction, game, lastScore);
-        }
+        System.out.println();
+        System.out.println("Highest Q-value: " + qTable.getMaxQValue(state));
+        System.out.println("Best action: " + qTable.getBestAction(state));
     }
 
-    private static int printImportantGameState(int tick, Direction direction, Game game, int lastScore) {
-        // DE: Ausgabe erfolgt nur, wenn ein Apfel gegessen wurde oder das Spiel endet.
-        // EN: Output only happens when an apple was eaten or the game ends.
-        boolean hasEaten = game.getScore() > lastScore;
+    private static void printState(SnakeState state) {
+        System.out.println("dangerStraight = " + state.isDangerStraight());
+        System.out.println("dangerLeft     = " + state.isDangerLeft());
+        System.out.println("dangerRight    = " + state.isDangerRight());
+        System.out.println("foodUp         = " + state.isFoodUp());
+        System.out.println("foodDown       = " + state.isFoodDown());
+        System.out.println("foodLeft       = " + state.isFoodLeft());
+        System.out.println("foodRight      = " + state.isFoodRight());
+    }
 
-        if (!hasEaten && !game.isGameOver()) {
-            return lastScore;
+    private static void printQValues(QTable qTable, SnakeState state) {
+        for (RelativeAction action : RelativeAction.values()) {
+            double qValue = qTable.getQValue(state, action);
+            System.out.println(action + " = " + qValue);
         }
-
-        if (hasEaten) {
-            System.out.println("Apple eaten");
-        }
-
-        if (game.isGameOver()) {
-            System.out.println("Game Over");
-        }
-
-        System.out.println("Tick: " + tick);
-        System.out.println("Direction: " + direction);
-        System.out.println("Head: " + game.getSnake().getSnakePosition().getFirst());
-        System.out.println("Length: " + game.getSnake().getSnakePosition().size());
-        System.out.println("Score: " + game.getScore());
-        System.out.println("Food: " + game.getFood().getApplePosition());
-        System.out.println();
-
-        return game.getScore();
     }
 }

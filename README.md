@@ -18,13 +18,17 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - `resetGame()` setzt Snake, Score, Richtung, Game Over und Apfel zurueck
 - Wandkollision und Selbst-Kollision setzen `gameOver`
 - Direkte Gegenrichtungen werden in `changeDirection(...)` blockiert
-- JUnit-Tests fuer zentrale Spiellogik und AI-Hilfslogik
+- JUnit-Tests fuer zentrale Spiellogik, AI-Hilfslogik und Q-Tabelle
 - AI-Package `at.orter.snake.ai`
 - `SnakeAi` prueft moegliche Richtungen, Wandkollision, Selbstkollision und Wachstum
 - `RandomAi` waehlt zufaellig eine sichere Richtung, wenn eine sichere Richtung existiert
-- Kleines RandomAI-Demo-Spiel in `Main`, das nur Essen und Game Over ausgibt
+- `StateReader` erzeugt aus einem laufenden Spiel einen kompakten `SnakeState`
 - Erster Q-Learning-Baustein `SnakeState` speichert Gefahren- und Apfelinformationen
-- `SnakeState` besitzt Wertevergleich und Hashcode fuer die spaetere Verwendung als Q-Tabellen-Schluessel
+- `SnakeState` besitzt Wertevergleich und Hashcode fuer die Verwendung als Q-Tabellen-Schluessel
+- `RelativeAction` definiert `STRAIGHT`, `TURN_LEFT` und `TURN_RIGHT`
+- `QTable` speichert Q-Werte pro State und Action und findet Maximum sowie beste Action
+- Sieben QTable-Tests pruefen Startwerte, getrennte States, Speicherung und Auswertung
+- `Main` zeigt eine QTable-Demo mit Werten vor und nach beispielhaften Lernerfahrungen
 
 ### Wichtige Lernidee
 
@@ -36,24 +40,22 @@ Die Schlange ist eine Liste von Positionen:
 
 Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwanz entfernt. Beim Wachsen wird vorne ein neuer Kopf eingefuegt, aber der Schwanz bleibt erhalten.
 
-### AI-Ablauf
+### Q-Learning-Grundlage
 
 ```text
-RandomAi waehlt Direction
-Main ruft game.changeDirection(direction) auf
-Main ruft game.tick() auf
-Game prueft Regeln und bewegt die Snake
+Game -> StateReader -> SnakeState
+SnakeState + RelativeAction -> QTable -> Q-Wert
+QTable -> hoechster Q-Wert und beste RelativeAction
 ```
 
-Die AI bewegt die Snake nicht direkt. Sie entscheidet nur eine Richtung. Die Spielregeln bleiben in `Game`.
+Die Q-Tabelle ist das Gedaechtnis der zukuenftigen lernenden AI. Die aktuelle Demo traegt Beispielwerte noch manuell ein; Reward, Q-Learning-Formel und Trainingsschleife folgen als naechste Bausteine.
 
 ### Naechste Schritte
 
-- Spielfeld im Terminal grafisch anzeigen
-- Neue `AppleSeekingAi` erstellen, die sichere Richtungen nach Apfelnaehe bewertet
-- Tests fuer `AppleSeekingAi` schreiben
-- `StateReader` erstellen, der aus einem laufenden Spiel einen `SnakeState` erzeugt
-- Danach relative Aktionen, Reward und Q-Tabelle schrittweise einfuehren
+- `ActionConverter` fuer die Uebersetzung von `RelativeAction` in `Direction` erstellen
+- Epsilon-Greedy fuer Exploration und Exploitation umsetzen
+- Reward-Berechnung und Q-Learning-Formel implementieren
+- Trainer fuer Ticks und Episoden erstellen
 - Spaeter: Spring-Boot-Backend, MySQL und React-Frontend planen
 
 ---
@@ -76,13 +78,17 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - `resetGame()` resets snake, score, direction, game over, and apple
 - Wall collision and self-collision set `gameOver`
 - Direct opposite directions are blocked in `changeDirection(...)`
-- JUnit tests for core game logic and AI helper logic
+- JUnit tests for core game logic, AI helper logic, and the Q-table
 - AI package `at.orter.snake.ai`
 - `SnakeAi` checks possible directions, wall collision, self-collision, and growth
 - `RandomAi` randomly chooses a safe direction if a safe direction exists
-- Small RandomAI demo game in `Main` that only prints eating events and game over
+- `StateReader` creates a compact `SnakeState` from a running game
 - First Q-learning building block `SnakeState` stores danger and apple information
-- `SnakeState` provides value equality and a hash code for later use as a Q-table key
+- `SnakeState` provides value equality and a hash code for use as a Q-table key
+- `RelativeAction` defines `STRAIGHT`, `TURN_LEFT`, and `TURN_RIGHT`
+- `QTable` stores Q-values per state and action and finds the maximum and best action
+- Seven QTable tests verify initial values, separate states, storage, and evaluation
+- `Main` shows a QTable demo with values before and after example learning experiences
 
 ### Important Learning Idea
 
@@ -94,24 +100,22 @@ The snake is a list of positions:
 
 During normal movement, a new head is added to the front and the tail is removed from the back. When the snake grows, a new head is added to the front, but the tail stays in the list.
 
-### AI Flow
+### Q-Learning Foundation
 
 ```text
-RandomAi chooses Direction
-Main calls game.changeDirection(direction)
-Main calls game.tick()
-Game checks the rules and moves the snake
+Game -> StateReader -> SnakeState
+SnakeState + RelativeAction -> QTable -> Q-value
+QTable -> highest Q-value and best RelativeAction
 ```
 
-The AI does not move the snake directly. It only decides one direction. The game rules stay in `Game`.
+The Q-table is the memory of the future learning AI. The current demo still inserts example values manually; rewards, the Q-learning formula, and the training loop are the next building blocks.
 
 ### Next Steps
 
-- Print the playground graphically in the terminal
-- Create a new `AppleSeekingAi` that scores safe directions by apple distance
-- Write tests for `AppleSeekingAi`
-- Create a `StateReader` that produces a `SnakeState` from a running game
-- Then introduce relative actions, rewards, and the Q-table step by step
+- Create an `ActionConverter` that translates `RelativeAction` into `Direction`
+- Implement epsilon-greedy for exploration and exploitation
+- Implement reward calculation and the Q-learning formula
+- Create a trainer for ticks and episodes
 - Later: plan Spring Boot backend, MySQL, and React frontend
 
 ---
