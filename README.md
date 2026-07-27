@@ -26,8 +26,10 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - Erster Q-Learning-Baustein `SnakeState` speichert Gefahren- und Apfelinformationen
 - `SnakeState` besitzt Wertevergleich und Hashcode fuer die Verwendung als Q-Tabellen-Schluessel
 - `RelativeAction` definiert `STRAIGHT`, `TURN_LEFT` und `TURN_RIGHT`
+- `ActionConverter` uebersetzt eine relative Aktion anhand der aktuellen Blickrichtung in eine absolute `Direction`
 - `QTable` speichert Q-Werte pro State und Action und findet Maximum sowie beste Action
 - Sieben QTable-Tests pruefen Startwerte, getrennte States, Speicherung und Auswertung
+- Drei ActionConverter-Tests pruefen alle zwoelf Kombinationen aus vier Richtungen und drei relativen Aktionen
 - `Main` zeigt eine QTable-Demo mit Werten vor und nach beispielhaften Lernerfahrungen
 
 ### Wichtige Lernidee
@@ -46,16 +48,17 @@ Bei normaler Bewegung wird vorne ein neuer Kopf eingefuegt und hinten der Schwan
 Game -> StateReader -> SnakeState
 SnakeState + RelativeAction -> QTable -> Q-Wert
 QTable -> hoechster Q-Wert und beste RelativeAction
+aktuelle Direction + RelativeAction -> ActionConverter -> neue Direction
 ```
 
 Die Q-Tabelle ist das Gedaechtnis der zukuenftigen lernenden AI. Die aktuelle Demo traegt Beispielwerte noch manuell ein; Reward, Q-Learning-Formel und Trainingsschleife folgen als naechste Bausteine.
 
 ### Naechste Schritte
 
-- `ActionConverter` fuer die Uebersetzung von `RelativeAction` in `Direction` erstellen
 - Epsilon-Greedy fuer Exploration und Exploitation umsetzen
 - Reward-Berechnung und Q-Learning-Formel implementieren
 - Trainer fuer Ticks und Episoden erstellen
+- Q-Tabelle speichern und laden, damit das Training spaeter fortgesetzt werden kann
 - Spaeter: Spring-Boot-Backend, MySQL und React-Frontend planen
 
 ---
@@ -86,8 +89,10 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - First Q-learning building block `SnakeState` stores danger and apple information
 - `SnakeState` provides value equality and a hash code for use as a Q-table key
 - `RelativeAction` defines `STRAIGHT`, `TURN_LEFT`, and `TURN_RIGHT`
+- `ActionConverter` translates a relative action into an absolute `Direction` based on the current facing direction
 - `QTable` stores Q-values per state and action and finds the maximum and best action
 - Seven QTable tests verify initial values, separate states, storage, and evaluation
+- Three ActionConverter tests verify all twelve combinations of four directions and three relative actions
 - `Main` shows a QTable demo with values before and after example learning experiences
 
 ### Important Learning Idea
@@ -106,16 +111,17 @@ During normal movement, a new head is added to the front and the tail is removed
 Game -> StateReader -> SnakeState
 SnakeState + RelativeAction -> QTable -> Q-value
 QTable -> highest Q-value and best RelativeAction
+current Direction + RelativeAction -> ActionConverter -> new Direction
 ```
 
 The Q-table is the memory of the future learning AI. The current demo still inserts example values manually; rewards, the Q-learning formula, and the training loop are the next building blocks.
 
 ### Next Steps
 
-- Create an `ActionConverter` that translates `RelativeAction` into `Direction`
 - Implement epsilon-greedy for exploration and exploitation
 - Implement reward calculation and the Q-learning formula
 - Create a trainer for ticks and episodes
+- Save and load the Q-table so training can later be continued
 - Later: plan Spring Boot backend, MySQL, and React frontend
 
 ---
