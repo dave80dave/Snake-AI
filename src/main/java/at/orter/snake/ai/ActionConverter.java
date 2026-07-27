@@ -6,11 +6,14 @@ public class ActionConverter {
 
     public Direction convert(Direction currentDirection, RelativeAction action) {
         return switch (action) {
-            // Geradeaus bedeutet: Die bisherige absolute Richtung bleibt gleich.
+            // DE: Geradeaus bedeutet: Die bisherige absolute Richtung bleibt gleich.
+            // EN: Straight means that the previous absolute direction stays the same.
             case STRAIGHT -> currentDirection;
 
-            // Links und rechts sind relative Aktionen. Deshalb muss zusätzlich
-            // geprüft werden, wohin die Schlange gerade schaut.
+            // DE: Links und rechts sind relative Aktionen. Deshalb muss zusätzlich
+            //     geprüft werden, wohin die Schlange gerade schaut.
+            // EN: Left and right are relative actions. Therefore, the snake's
+            //     current facing direction must also be checked.
             case TURN_LEFT -> switch (currentDirection) {
                 case UP -> Direction.LEFT;
                 case RIGHT -> Direction.UP;
