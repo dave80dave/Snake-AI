@@ -28,8 +28,12 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - `RelativeAction` definiert `STRAIGHT`, `TURN_LEFT` und `TURN_RIGHT`
 - `ActionConverter` uebersetzt eine relative Aktion anhand der aktuellen Blickrichtung in eine absolute `Direction`
 - `QTable` speichert Q-Werte pro State und Action und findet Maximum sowie beste Action
+- `QLearningAi` waehlt mit Epsilon-Greedy zwischen Ausprobieren und der besten bekannten Action
+- `QLearningAi.learn(...)` aktualisiert Q-Werte mit Lernrate, Zukunftsfaktor, Belohnung und Game-Over-Sonderfall
 - Sieben QTable-Tests pruefen Startwerte, getrennte States, Speicherung und Auswertung
 - Drei ActionConverter-Tests pruefen alle zwoelf Kombinationen aus vier Richtungen und drei relativen Aktionen
+- Fuenf QLearningAi-Tests pruefen Aktionsauswahl, Lernformel, Game Over und getrennte Action-Werte
+- Insgesamt pruefen 28 JUnit-Tests die bisherige Spiel- und AI-Logik
 - `Main` zeigt eine QTable-Demo mit Werten vor und nach beispielhaften Lernerfahrungen
 
 ### Wichtige Lernidee
@@ -49,15 +53,26 @@ Game -> StateReader -> SnakeState
 SnakeState + RelativeAction -> QTable -> Q-Wert
 QTable -> hoechster Q-Wert und beste RelativeAction
 aktuelle Direction + RelativeAction -> ActionConverter -> neue Direction
+QLearningAi -> Epsilon-Greedy -> zufaellige oder beste RelativeAction
+oldState + Action + Reward + newState -> Q-Learning-Formel -> neuer Q-Wert
 ```
 
-Die Q-Tabelle ist das Gedaechtnis der zukuenftigen lernenden AI. Die aktuelle Demo traegt Beispielwerte noch manuell ein; Reward, Q-Learning-Formel und Trainingsschleife folgen als naechste Bausteine.
+Die Q-Tabelle ist das Gedaechtnis der lernenden AI. `QLearningAi` kann bereits Aktionen auswaehlen und einzelne Erfahrungen in neue Q-Werte umrechnen. Die aktuelle `Main` traegt ihre Beispielwerte weiterhin manuell ein, weil Reward-System und Trainingsschleife noch nicht mit dem Spiel verbunden sind.
+
+Die verwendete Lernformel lautet:
+
+```text
+targetQ = reward + gamma * maxFutureQ
+newQ = oldQ + alpha * (targetQ - oldQ)
+```
+
+Bei Game Over besteht `targetQ` nur aus `reward`, weil danach keine zukuenftige Aktion mehr existiert.
 
 ### Naechste Schritte
 
-- Epsilon-Greedy fuer Exploration und Exploitation umsetzen
-- Reward-Berechnung und Q-Learning-Formel implementieren
+- Reward-Berechnung fuer Apfel, Tod und normale Bewegung festlegen
 - Trainer fuer Ticks und Episoden erstellen
+- `StateReader`, `QLearningAi` und `ActionConverter` mit dem laufenden Spiel verbinden
 - Q-Tabelle speichern und laden, damit das Training spaeter fortgesetzt werden kann
 - Spaeter: Spring-Boot-Backend, MySQL und React-Frontend planen
 
@@ -91,8 +106,12 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - `RelativeAction` defines `STRAIGHT`, `TURN_LEFT`, and `TURN_RIGHT`
 - `ActionConverter` translates a relative action into an absolute `Direction` based on the current facing direction
 - `QTable` stores Q-values per state and action and finds the maximum and best action
+- `QLearningAi` uses epsilon-greedy to choose between exploration and the best known action
+- `QLearningAi.learn(...)` updates Q-values using the learning rate, discount factor, reward, and game-over case
 - Seven QTable tests verify initial values, separate states, storage, and evaluation
 - Three ActionConverter tests verify all twelve combinations of four directions and three relative actions
+- Five QLearningAi tests verify action selection, the learning formula, game over, and separate action values
+- A total of 28 JUnit tests verify the current game and AI logic
 - `Main` shows a QTable demo with values before and after example learning experiences
 
 ### Important Learning Idea
@@ -112,15 +131,26 @@ Game -> StateReader -> SnakeState
 SnakeState + RelativeAction -> QTable -> Q-value
 QTable -> highest Q-value and best RelativeAction
 current Direction + RelativeAction -> ActionConverter -> new Direction
+QLearningAi -> epsilon-greedy -> random or best RelativeAction
+oldState + action + reward + newState -> Q-learning formula -> new Q-value
 ```
 
-The Q-table is the memory of the future learning AI. The current demo still inserts example values manually; rewards, the Q-learning formula, and the training loop are the next building blocks.
+The Q-table is the learning AI's memory. `QLearningAi` can already select actions and turn individual experiences into new Q-values. The current `Main` still inserts its example values manually because the reward system and training loop are not connected to the game yet.
+
+The learning formula is:
+
+```text
+targetQ = reward + gamma * maxFutureQ
+newQ = oldQ + alpha * (targetQ - oldQ)
+```
+
+At game over, `targetQ` consists only of `reward` because no future action exists.
 
 ### Next Steps
 
-- Implement epsilon-greedy for exploration and exploitation
-- Implement reward calculation and the Q-learning formula
+- Define reward calculation for apples, death, and regular movement
 - Create a trainer for ticks and episodes
+- Connect `StateReader`, `QLearningAi`, and `ActionConverter` to the running game
 - Save and load the Q-table so training can later be continued
 - Later: plan Spring Boot backend, MySQL, and React frontend
 
