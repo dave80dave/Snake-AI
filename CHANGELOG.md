@@ -2,6 +2,17 @@
 
 ## Deutsch
 
+### v0.3.0 - Q-Learning Training
+
+- `SnakeState` und `StateReader` beschreiben Gefahren sowie die Richtung des Apfels
+- `RelativeAction` und `ActionConverter` uebersetzen relative Entscheidungen in echte Bewegungsrichtungen
+- `QTable` speichert Q-Werte und findet die beste bekannte Aktion
+- `QLearningAi` verwendet Epsilon-Greedy und aktualisiert Werte mit der Q-Learning-Formel
+- `RewardCalculator` bewertet Tod, Apfel und normale Bewegung
+- `Trainer` verbindet alle AI-Bausteine und trainiert einzelne Schritte sowie vollstaendige Episoden
+- `Main` fuehrt 1.000 Trainings-Episoden aus und zeigt den Lernfortschritt
+- 35 erfolgreiche JUnit-Tests fuer Spiel- und AI-Logik
+
 ### v0.2.1 - Executable JAR
 
 - JAR kann direkt mit `java -jar target/Snake-AI-1.0-SNAPSHOT.jar` gestartet werden
@@ -29,6 +40,17 @@
 ---
 
 ## English
+
+### v0.3.0 - Q-Learning Training
+
+- `SnakeState` and `StateReader` describe dangers and the apple direction
+- `RelativeAction` and `ActionConverter` translate relative decisions into actual movement directions
+- `QTable` stores Q-values and finds the best known action
+- `QLearningAi` uses epsilon-greedy and updates values with the Q-learning formula
+- `RewardCalculator` evaluates death, apples, and regular movement
+- `Trainer` connects all AI components and trains individual steps and complete episodes
+- `Main` runs 1,000 training episodes and displays learning progress
+- 35 passing JUnit tests for game and AI logic
 
 ### v0.2.1 - Executable JAR
 

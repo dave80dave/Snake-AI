@@ -31,12 +31,15 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - `QLearningAi` waehlt mit Epsilon-Greedy zwischen Ausprobieren und der besten bekannten Action
 - `QLearningAi.learn(...)` aktualisiert Q-Werte mit Lernrate, Zukunftsfaktor, Belohnung und Game-Over-Sonderfall
 - `RewardCalculator` vergibt `-100.0` fuer Tod, `10.0` fuer einen Apfel und `-0.1` fuer einen normalen Schritt
+- `Trainer` verbindet StateReader, QLearningAi, ActionConverter, Game und RewardCalculator zu einem vollstaendigen Trainingsschritt
+- Episoden besitzen ein Schrittlimit, werden nach Abschluss zurueckgesetzt und behalten ihre gemeinsame Q-Tabelle
 - Sieben QTable-Tests pruefen Startwerte, getrennte States, Speicherung und Auswertung
 - Drei ActionConverter-Tests pruefen alle zwoelf Kombinationen aus vier Richtungen und drei relativen Aktionen
 - Fuenf QLearningAi-Tests pruefen Aktionsauswahl, Lernformel, Game Over und getrennte Action-Werte
 - Drei RewardCalculator-Tests pruefen Tod, Apfel und normale Bewegung
-- Insgesamt pruefen 31 JUnit-Tests die bisherige Spiel- und AI-Logik
-- `Main` zeigt eine QTable-Demo mit Werten vor und nach beispielhaften Lernerfahrungen
+- Vier Trainer-Tests pruefen Bewegung, Rewards, Q-Wert-Aktualisierung, Reset und Schrittlimit
+- Insgesamt pruefen 35 JUnit-Tests die bisherige Spiel- und AI-Logik
+- `Main` trainiert die Q-Learning-AI ueber 1.000 Episoden und zeigt Fortschritt, Durchschnitt, Bestwert und Q-Werte
 
 ### Wichtige Lernidee
 
@@ -58,9 +61,10 @@ aktuelle Direction + RelativeAction -> ActionConverter -> neue Direction
 QLearningAi -> Epsilon-Greedy -> zufaellige oder beste RelativeAction
 oldState + Action + Reward + newState -> Q-Learning-Formel -> neuer Q-Wert
 alter Score + neuer Score + Game Over -> RewardCalculator -> Reward
+Trainer -> Aktion ausfuehren -> Reward berechnen -> Q-Wert lernen -> naechste Episode
 ```
 
-Die Q-Tabelle ist das Gedaechtnis der lernenden AI. `QLearningAi` kann bereits Aktionen auswaehlen und einzelne Erfahrungen in neue Q-Werte umrechnen. Der `RewardCalculator` bewertet Spielschritte. Die aktuelle `Main` traegt ihre Beispielwerte weiterhin manuell ein, weil die Trainingsschleife noch nicht mit dem Spiel verbunden ist.
+Die Q-Tabelle ist das Gedaechtnis der lernenden AI. `QLearningAi` waehlt Aktionen und rechnet Erfahrungen in neue Q-Werte um. Der `RewardCalculator` bewertet Spielschritte und der `Trainer` verbindet alle Bausteine mit dem laufenden Spiel. Die `Main` fuehrt damit erstmals ein echtes automatisches Training aus.
 
 Die verwendete Lernformel lautet:
 
@@ -73,9 +77,9 @@ Bei Game Over besteht `targetQ` nur aus `reward`, weil danach keine zukuenftige 
 
 ### Naechste Schritte
 
-- Trainer fuer Ticks und Episoden erstellen
-- `StateReader`, `QLearningAi` und `ActionConverter` mit dem laufenden Spiel verbinden
 - Q-Tabelle speichern und laden, damit das Training spaeter fortgesetzt werden kann
+- Trainingsparameter und Fortschrittsdaten fuer ein Backend zugaenglich machen
+- Ausfuehrliche farbige Lerndokumentation fuer den gesamten Q-Learning-Ablauf erstellen
 - Spaeter: Spring-Boot-Backend, MySQL und React-Frontend planen
 
 ---
@@ -111,12 +115,15 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - `QLearningAi` uses epsilon-greedy to choose between exploration and the best known action
 - `QLearningAi.learn(...)` updates Q-values using the learning rate, discount factor, reward, and game-over case
 - `RewardCalculator` returns `-100.0` for death, `10.0` for an apple, and `-0.1` for a regular step
+- `Trainer` connects StateReader, QLearningAi, ActionConverter, Game, and RewardCalculator into a complete training step
+- Episodes use a step limit, reset after completion, and retain their shared Q-table
 - Seven QTable tests verify initial values, separate states, storage, and evaluation
 - Three ActionConverter tests verify all twelve combinations of four directions and three relative actions
 - Five QLearningAi tests verify action selection, the learning formula, game over, and separate action values
 - Three RewardCalculator tests verify death, apple, and regular movement
-- A total of 31 JUnit tests verify the current game and AI logic
-- `Main` shows a QTable demo with values before and after example learning experiences
+- Four Trainer tests verify movement, rewards, Q-value updates, reset, and the step limit
+- A total of 35 JUnit tests verify the current game and AI logic
+- `Main` trains the Q-learning AI for 1,000 episodes and displays progress, average, best score, and Q-values
 
 ### Important Learning Idea
 
@@ -138,9 +145,10 @@ current Direction + RelativeAction -> ActionConverter -> new Direction
 QLearningAi -> epsilon-greedy -> random or best RelativeAction
 oldState + action + reward + newState -> Q-learning formula -> new Q-value
 old score + new score + game over -> RewardCalculator -> reward
+Trainer -> execute action -> calculate reward -> learn Q-value -> next episode
 ```
 
-The Q-table is the learning AI's memory. `QLearningAi` can already select actions and turn individual experiences into new Q-values. The `RewardCalculator` evaluates game steps. The current `Main` still inserts its example values manually because the training loop is not connected to the game yet.
+The Q-table is the learning AI's memory. `QLearningAi` selects actions and turns experiences into new Q-values. The `RewardCalculator` evaluates game steps, and the `Trainer` connects every component to the running game. `Main` now performs real automatic training for the first time.
 
 The learning formula is:
 
@@ -153,9 +161,9 @@ At game over, `targetQ` consists only of `reward` because no future action exist
 
 ### Next Steps
 
-- Create a trainer for ticks and episodes
-- Connect `StateReader`, `QLearningAi`, and `ActionConverter` to the running game
 - Save and load the Q-table so training can later be continued
+- Expose training parameters and progress data to a backend
+- Create detailed visual learning documentation for the complete Q-learning flow
 - Later: plan Spring Boot backend, MySQL, and React frontend
 
 ---
@@ -180,9 +188,9 @@ java -jar target/Snake-AI-1.0-SNAPSHOT.jar
 
 ## Releases
 
-Deutsch: Die bisherigen Meilensteine stehen in `CHANGELOG.md`. Aktuelle Tags: `v0.1.0` fuer die Spiellogik, `v0.2.0` fuer die RandomAI-Demo und `v0.2.1` fuer die direkt startbare JAR.
+Deutsch: Die bisherigen Meilensteine stehen in `CHANGELOG.md`. Aktuelle Tags: `v0.1.0` fuer die Spiellogik, `v0.2.0` fuer die RandomAI-Demo, `v0.2.1` fuer die direkt startbare JAR und `v0.3.0` fuer das erste vollstaendige Q-Learning-Training.
 
-English: The current milestones are listed in `CHANGELOG.md`. Current tags: `v0.1.0` for game logic, `v0.2.0` for the RandomAI demo, and `v0.2.1` for the directly executable JAR.
+English: The current milestones are listed in `CHANGELOG.md`. Current tags: `v0.1.0` for game logic, `v0.2.0` for the RandomAI demo, `v0.2.1` for the directly executable JAR, and `v0.3.0` for the first complete Q-learning training loop.
 
 ---
 
