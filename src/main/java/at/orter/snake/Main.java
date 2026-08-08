@@ -3,21 +3,26 @@ package at.orter.snake;
 import at.orter.snake.ai.ActionConverter;
 import at.orter.snake.ai.QLearningAi;
 import at.orter.snake.ai.QTable;
+import at.orter.snake.ai.QTableStorage;
 import at.orter.snake.ai.RelativeAction;
 import at.orter.snake.ai.RewardCalculator;
 import at.orter.snake.ai.SnakeState;
 import at.orter.snake.ai.StateReader;
 import at.orter.snake.ai.Trainer;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 public class Main {
 
-    private static final int PLAYGROUND_WIDTH = 12;
-    private static final int PLAYGROUND_HEIGHT = 12;
-    private static final int EPISODES = 11_000;
+    private static final int PLAYGROUND_WIDTH = 25;
+    private static final int PLAYGROUND_HEIGHT = 25;
+    private static final int EPISODES = 1_000_000_000;
     private static final int MAX_STEPS_PER_EPISODE = 500;
     private static final int PROGRESS_INTERVAL = 100;
+    private static final Path Q_TABLE_FILE = Path.of("data", "qtable.csv");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // DE: Zuerst wird ein normales Snake-Spiel aufgebaut. Die AI arbeitet
         //     spaeter mit genau diesem Game und verwendet keine eigene Spiellogik.
         // EN: First, a regular Snake game is created. The AI later works with
@@ -36,7 +41,8 @@ public class Main {
         //     epsilon = 0.1: explore 10 percent of the time
         //     alpha   = 0.1: learn gradually
         //     gamma   = 0.9: strongly consider future opportunities
-        QTable qTable = new QTable();
+        QTableStorage qTableStorage = new QTableStorage(Q_TABLE_FILE);
+        QTable qTable = qTableStorage.load();
         QLearningAi qLearningAi = new QLearningAi(qTable, 0.1, 0.1, 0.9);
         StateReader stateReader = new StateReader();
 
@@ -51,6 +57,8 @@ public class Main {
         System.out.println("=== Snake Q-Learning Training ===");
         System.out.println("Episodes: " + EPISODES);
         System.out.println("Maximum steps per episode: " + MAX_STEPS_PER_EPISODE);
+        System.out.println("Loaded Q-table states: " + qTable.size());
+        System.out.println("Q-table file: " + qTableStorage.getFilePath().toAbsolutePath());
         System.out.println();
 
         int bestScore = 0;
@@ -77,8 +85,20 @@ public class Main {
                         bestScore
                 );
                 intervalScore = 0;
+
+                // DE: Regelmaessiges Speichern schuetzt den Lernfortschritt auch bei
+                //     sehr langen Trainingslaeufen vor einem spaeteren Verlust.
+                // EN: Regular saving protects progress from later loss during very
+                //     long training runs.
+                qTableStorage.save(qTable);
             }
         }
+
+        // DE: Nach einem normal abgeschlossenen Training wird der letzte Stand
+        //     gespeichert, auch wenn die Episodenzahl kein Speicherintervall trifft.
+        // EN: After normal training completion, the final state is saved even if
+        //     the episode count does not end on a save interval.
+        qTableStorage.save(qTable);
 
         double totalAverage = (double) totalScore / EPISODES;
         SnakeState currentState = stateReader.readState(game);
@@ -100,6 +120,6 @@ public class Main {
 
         System.out.println("Best known action: " + qTable.getBestAction(currentState));
         System.out.println();
-        System.out.println("Note: Q-table persistence will be added next.");
+        System.out.println("Saved Q-table states: " + qTable.size());
     }
 }

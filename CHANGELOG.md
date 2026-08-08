@@ -2,6 +2,12 @@
 
 ## Deutsch
 
+### Unveroeffentlicht - Persistente Q-Tabelle
+
+- `QTableStorage` speichert und laedt States und Q-Werte als lokale CSV-Datei
+- `Main` setzt vorhandenes Wissen beim naechsten Start fort und speichert regelmaessig
+- Drei neue Tests pruefen fehlende, gueltige und ungueltige Speicherdateien
+
 ### v0.3.0 - Q-Learning Training
 
 - `SnakeState` und `StateReader` beschreiben Gefahren sowie die Richtung des Apfels
@@ -40,6 +46,12 @@
 ---
 
 ## English
+
+### Unreleased - Persistent Q-table
+
+- `QTableStorage` saves and loads states and Q-values as a local CSV file
+- `Main` continues existing knowledge on the next start and saves regularly
+- Three new tests cover missing, valid, and invalid storage files
 
 ### v0.3.0 - Q-Learning Training
 

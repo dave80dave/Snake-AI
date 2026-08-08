@@ -33,13 +33,17 @@ Snake-AI ist ein Lernprojekt in Java. Ziel ist zuerst ein funktionierendes Snake
 - `RewardCalculator` vergibt `-100.0` fuer Tod, `10.0` fuer einen Apfel und `-0.1` fuer einen normalen Schritt
 - `Trainer` verbindet StateReader, QLearningAi, ActionConverter, Game und RewardCalculator zu einem vollstaendigen Trainingsschritt
 - Episoden besitzen ein Schrittlimit, werden nach Abschluss zurueckgesetzt und behalten ihre gemeinsame Q-Tabelle
+- `QTableStorage` speichert das gelernte Wissen dauerhaft in `data/qtable.csv` und laedt es beim naechsten Programmstart wieder
+- Die Q-Tabelle wird waehrend langer Trainingslaeufe regelmaessig und nach einem normal abgeschlossenen Training gespeichert
+- Beim ersten Start ohne Speicherdatei wird automatisch mit einer leeren Q-Tabelle begonnen
 - Sieben QTable-Tests pruefen Startwerte, getrennte States, Speicherung und Auswertung
 - Drei ActionConverter-Tests pruefen alle zwoelf Kombinationen aus vier Richtungen und drei relativen Aktionen
 - Fuenf QLearningAi-Tests pruefen Aktionsauswahl, Lernformel, Game Over und getrennte Action-Werte
 - Drei RewardCalculator-Tests pruefen Tod, Apfel und normale Bewegung
 - Vier Trainer-Tests pruefen Bewegung, Rewards, Q-Wert-Aktualisierung, Reset und Schrittlimit
-- Insgesamt pruefen 35 JUnit-Tests die bisherige Spiel- und AI-Logik
-- `Main` trainiert die Q-Learning-AI ueber 1.000 Episoden und zeigt Fortschritt, Durchschnitt, Bestwert und Q-Werte
+- Drei QTableStorage-Tests pruefen den ersten Start, Speichern und Laden sowie eine ungueltige Datei
+- Insgesamt pruefen 38 JUnit-Tests die bisherige Spiel- und AI-Logik
+- `Main` laedt den bisherigen Lernstand, trainiert die Q-Learning-AI weiter und zeigt Fortschritt, Durchschnitt, Bestwert und Q-Werte
 
 ### Wichtige Lernidee
 
@@ -66,6 +70,19 @@ Trainer -> Aktion ausfuehren -> Reward berechnen -> Q-Wert lernen -> naechste Ep
 
 Die Q-Tabelle ist das Gedaechtnis der lernenden AI. `QLearningAi` waehlt Aktionen und rechnet Erfahrungen in neue Q-Werte um. Der `RewardCalculator` bewertet Spielschritte und der `Trainer` verbindet alle Bausteine mit dem laufenden Spiel. Die `Main` fuehrt damit erstmals ein echtes automatisches Training aus.
 
+### Persistenter Speicher
+
+Im Arbeitsspeicher waere das Wissen nach jedem Programmende verloren. Deshalb laedt `Main` beim Start ueber `QTableStorage` die Datei `data/qtable.csv`. Existiert sie noch nicht, entsteht eine leere Q-Tabelle. Waehrend des Trainings wird dieselbe Tabelle veraendert und regelmaessig wieder gespeichert.
+
+```text
+Programmstart -> QTableStorage.load() -> bekannte QTable oder leere QTable
+Training      -> QLearningAi veraendert die Q-Werte im Arbeitsspeicher
+Speichern     -> QTableStorage.save(qTable) -> data/qtable.csv
+Naechster Start -> dieselben States und Q-Werte werden weiterverwendet
+```
+
+Jede CSV-Zeile enthaelt die sieben Wahr/Falsch-Werte eines `SnakeState` und die drei Zahlenwerte fuer `STRAIGHT`, `TURN_LEFT` und `TURN_RIGHT`. Die Datei wird absichtlich nicht zu Git hinzugefuegt: Sie ist der persoenliche, lokal trainierte Lernstand und entsteht beim Ausfuehren automatisch.
+
 Die verwendete Lernformel lautet:
 
 ```text
@@ -77,7 +94,6 @@ Bei Game Over besteht `targetQ` nur aus `reward`, weil danach keine zukuenftige 
 
 ### Naechste Schritte
 
-- Q-Tabelle speichern und laden, damit das Training spaeter fortgesetzt werden kann
 - Trainingsparameter und Fortschrittsdaten fuer ein Backend zugaenglich machen
 - Ausfuehrliche farbige Lerndokumentation fuer den gesamten Q-Learning-Ablauf erstellen
 - Spaeter: Spring-Boot-Backend, MySQL und React-Frontend planen
@@ -117,13 +133,17 @@ Snake-AI is a Java learning project. The first goal is to build a working Snake 
 - `RewardCalculator` returns `-100.0` for death, `10.0` for an apple, and `-0.1` for a regular step
 - `Trainer` connects StateReader, QLearningAi, ActionConverter, Game, and RewardCalculator into a complete training step
 - Episodes use a step limit, reset after completion, and retain their shared Q-table
+- `QTableStorage` permanently saves learned knowledge in `data/qtable.csv` and loads it again on the next program start
+- The Q-table is saved regularly during long training runs and after normal training completion
+- The first run automatically starts with an empty Q-table when no storage file exists
 - Seven QTable tests verify initial values, separate states, storage, and evaluation
 - Three ActionConverter tests verify all twelve combinations of four directions and three relative actions
 - Five QLearningAi tests verify action selection, the learning formula, game over, and separate action values
 - Three RewardCalculator tests verify death, apple, and regular movement
 - Four Trainer tests verify movement, rewards, Q-value updates, reset, and the step limit
-- A total of 35 JUnit tests verify the current game and AI logic
-- `Main` trains the Q-learning AI for 1,000 episodes and displays progress, average, best score, and Q-values
+- Three QTableStorage tests verify the first run, saving and loading, and an invalid file
+- A total of 38 JUnit tests verify the current game and AI logic
+- `Main` loads the existing knowledge, continues training the Q-learning AI, and displays progress, average, best score, and Q-values
 
 ### Important Learning Idea
 
@@ -150,6 +170,19 @@ Trainer -> execute action -> calculate reward -> learn Q-value -> next episode
 
 The Q-table is the learning AI's memory. `QLearningAi` selects actions and turns experiences into new Q-values. The `RewardCalculator` evaluates game steps, and the `Trainer` connects every component to the running game. `Main` now performs real automatic training for the first time.
 
+### Persistent Storage
+
+Knowledge stored only in memory would be lost whenever the program ends. Therefore, `Main` uses `QTableStorage` to load `data/qtable.csv` at startup. If the file does not exist yet, an empty Q-table is created. Training changes that same table in memory and saves it regularly.
+
+```text
+Program start -> QTableStorage.load() -> known QTable or empty QTable
+Training      -> QLearningAi changes Q-values in memory
+Saving        -> QTableStorage.save(qTable) -> data/qtable.csv
+Next start    -> the same states and Q-values are reused
+```
+
+Each CSV row contains the seven true/false values of one `SnakeState` and the three numeric values for `STRAIGHT`, `TURN_LEFT`, and `TURN_RIGHT`. The file is intentionally excluded from Git: it is the personal, locally trained learning state and is created automatically when the application runs.
+
 The learning formula is:
 
 ```text
@@ -161,7 +194,6 @@ At game over, `targetQ` consists only of `reward` because no future action exist
 
 ### Next Steps
 
-- Save and load the Q-table so training can later be continued
 - Expose training parameters and progress data to a backend
 - Create detailed visual learning documentation for the complete Q-learning flow
 - Later: plan Spring Boot backend, MySQL, and React frontend

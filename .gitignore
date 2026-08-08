@@ -37,3 +37,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# DE: Lokaler Lernstand der AI; wird auf jedem Rechner selbst erzeugt.
+# EN: Local AI learning state; generated separately on every machine.
+/data/qtable.csv
+/data/qtable.csv.tmp

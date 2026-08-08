@@ -11,7 +11,7 @@ public class QTable {
     //     The inner EnumMap stores one Q-value for each RelativeAction.
     private final Map<SnakeState, EnumMap<RelativeAction, Double>> qValues = new HashMap<>();
 
-    public double getQValue(SnakeState state, RelativeAction action) {
+    public synchronized double getQValue(SnakeState state, RelativeAction action) {
         // DE: Zuerst wird die innere Action-Tabelle fuer den uebergebenen State gesucht.
         //     Ist der State noch unbekannt, liefert Map.get(...) den Wert null.
         // EN: First, look up the inner action table for the supplied state.
@@ -50,7 +50,7 @@ public class QTable {
         return actionMap.get(action);
     }
 
-    public void setQValue(SnakeState state, RelativeAction action, double value) {
+    public synchronized void setQValue(SnakeState state, RelativeAction action, double value) {
         // DE: getQValue(...) legt einen unbekannten State bei Bedarf zuerst an.
         //     Danach kann der neue Wert sicher in seiner Action-Tabelle gespeichert werden.
         // EN: getQValue(...) initializes an unknown state when needed. The new value
@@ -59,7 +59,7 @@ public class QTable {
         qValues.get(state).put(action, value);
     }
 
-    public double getMaxQValue(SnakeState state) {
+    public synchronized double getMaxQValue(SnakeState state) {
         // DE: Negative Unendlichkeit ist kleiner als jeder normale Q-Wert. Dadurch
         //     funktioniert die Maximumsuche auch, wenn alle drei Werte negativ sind.
         // EN: Negative infinity is smaller than every regular Q-value. This allows
@@ -79,7 +79,7 @@ public class QTable {
         return maxQValue;
     }
 
-    public RelativeAction getBestAction(SnakeState state) {
+    public synchronized RelativeAction getBestAction(SnakeState state) {
         // DE: Neben dem groessten Wert wird hier auch die dazugehoerige Action gemerkt.
         //     Bei gleichen Startwerten bleibt STRAIGHT als erster Enum-Wert ausgewaehlt.
         // EN: This method remembers both the highest value and its associated action.
@@ -97,5 +97,25 @@ public class QTable {
         }
 
         return bestAction;
+    }
+
+    public synchronized Map<SnakeState, EnumMap<RelativeAction, Double>> createSnapshot() {
+        // DE: Fuer das Speichern wird eine unabhaengige Kopie des aktuellen Wissens
+        //     erstellt. Dadurch arbeitet QTableStorage nicht direkt auf der internen Map.
+        // EN: Saving uses an independent copy of the current knowledge. This keeps
+        //     QTableStorage from working directly on the internal map.
+        Map<SnakeState, EnumMap<RelativeAction, Double>> snapshot = new HashMap<>();
+
+        for (Map.Entry<SnakeState, EnumMap<RelativeAction, Double>> entry : qValues.entrySet()) {
+            snapshot.put(entry.getKey(), new EnumMap<>(entry.getValue()));
+        }
+
+        return snapshot;
+    }
+
+    public synchronized int size() {
+        // DE: Ein Eintrag entspricht genau einem bereits bekannten SnakeState.
+        // EN: One entry represents exactly one previously encountered SnakeState.
+        return qValues.size();
     }
 }
