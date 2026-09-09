@@ -42,11 +42,58 @@ function localMove(game, requestedDirection) {
   return { ...game, snake, food, direction, score: game.score + (grows ? 1 : 0) }
 }
 
-function safeLocalDirection(game) {
-  const candidates = Object.keys(vectors).filter(direction => opposite[game.direction] !== direction)
-  const safe = candidates.filter(direction => !localMove(game, direction).gameOver)
-  const choices = safe.length ? safe : candidates
-  return choices[Math.floor(Math.random() * choices.length)]
+const relativeActions = ['STRAIGHT', 'TURN_LEFT', 'TURN_RIGHT']
+const leftOf = { UP: 'LEFT', LEFT: 'DOWN', DOWN: 'RIGHT', RIGHT: 'UP' }
+const rightOf = { UP: 'RIGHT', RIGHT: 'DOWN', DOWN: 'LEFT', LEFT: 'UP' }
+
+function absoluteDirection(direction, action) {
+  if (action === 'TURN_LEFT') return leftOf[direction]
+  if (action === 'TURN_RIGHT') return rightOf[direction]
+  return direction
+}
+
+function isDanger(game, direction) {
+  const [dx, dy] = vectors[direction]
+  const head = { x: game.snake[0].x + dx, y: game.snake[0].y + dy }
+  const grows = head.x === game.food.x && head.y === game.food.y
+  const body = grows ? game.snake : game.snake.slice(0, -1)
+  return head.x < 0 || head.x >= game.width || head.y < 0 || head.y >= game.height
+    || body.some(part => part.x === head.x && part.y === head.y)
+}
+
+function stateKey(game) {
+  const head = game.snake[0]
+  const directions = [game.direction, leftOf[game.direction], rightOf[game.direction]]
+  return [
+    ...directions.map(direction => Number(isDanger(game, direction))),
+    Number(game.food.y < head.y), Number(game.food.y > head.y),
+    Number(game.food.x < head.x), Number(game.food.x > head.x),
+  ].join('')
+}
+
+function loadLearningMemory() {
+  try { return JSON.parse(localStorage.getItem('snake-q-table-v1')) ?? {} }
+  catch { return {} }
+}
+
+function learningMove(game, qTable) {
+  const oldState = stateKey(game)
+  const values = qTable[oldState] ?? [0, 0, 0]
+  const explore = Math.random() < 0.12
+  const bestValue = Math.max(...values)
+  const bestIndexes = values.map((value, index) => value === bestValue ? index : -1).filter(index => index >= 0)
+  const actionIndex = explore
+    ? Math.floor(Math.random() * relativeActions.length)
+    : bestIndexes[Math.floor(Math.random() * bestIndexes.length)]
+  const direction = absoluteDirection(game.direction, relativeActions[actionIndex])
+  const nextGame = localMove(game, direction)
+  const reward = nextGame.gameOver ? -100 : nextGame.score > game.score ? 10 : -0.1
+  const futureValues = qTable[stateKey(nextGame)] ?? [0, 0, 0]
+  const target = reward + (nextGame.gameOver ? 0 : 0.9 * Math.max(...futureValues))
+  const learned = values[actionIndex] + 0.15 * (target - values[actionIndex])
+  qTable[oldState] = values.map((value, index) => index === actionIndex ? learned : value)
+  localStorage.setItem('snake-q-table-v1', JSON.stringify(qTable))
+  return nextGame
 }
 
 async function request(path, options) {
@@ -64,6 +111,7 @@ export default function App() {
   const busy = useRef(false)
   const aiModeRef = useRef(false)
   const manualDirection = useRef('RIGHT')
+  const qTable = useRef(loadLearningMemory())
 
   const setMode = (enabled) => {
     aiModeRef.current = enabled
@@ -88,7 +136,9 @@ export default function App() {
     if (localMode) {
       setGame(current => path.endsWith('/new')
         ? createLocalGame()
-        : localMove(current, path.endsWith('/ai-step') ? safeLocalDirection(current) : body.direction))
+        : path.endsWith('/ai-step')
+          ? learningMove(current, qTable.current)
+          : localMove(current, body.direction))
       busy.current = false
       return
     }
@@ -125,6 +175,12 @@ export default function App() {
     return () => clearInterval(timer)
   }, [action, aiMode, game?.gameOver, started])
 
+  useEffect(() => {
+    if (!started || !aiMode || !game?.gameOver) return
+    const timer = setTimeout(restart, 650)
+    return () => clearTimeout(timer)
+  }, [aiMode, game?.gameOver, started])
+
   const restart = async () => {
     manualDirection.current = 'RIGHT'
     await action('/api/game/new')
@@ -152,7 +208,7 @@ export default function App() {
               <button className={!aiMode ? 'active' : ''} onClick={() => setMode(false)}>DU</button>
               <button className={aiMode ? 'active' : ''} onClick={() => setMode(true)}>KI</button>
             </div>
-            <p>{aiMode ? 'Der sichere Zufalls-Agent steuert.' : 'Ändere die Richtung mit Pfeiltasten oder WASD.'}</p>
+            <p>{aiMode ? 'Q-Learning lernt dauerhaft in diesem Browser.' : 'Ändere die Richtung mit Pfeiltasten oder WASD.'}</p>
           </div>
           <Controls disabled={aiMode || !started} onMove={(direction) => { manualDirection.current = direction }} />
           <button className="restart" onClick={restart}>↻ {started ? 'Neues Spiel' : 'Spiel starten'}</button>
