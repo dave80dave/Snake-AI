@@ -66,6 +66,7 @@ for (let episode = 1; episode <= EPISODES; episode++) {
   const epsilon = Math.max(0.02, 0.35 * (1 - episode / EPISODES))
   for (let step = 0; step < MAX_STEPS && !game.gameOver; step++) {
     const oldState = state(game)
+    const oldDistance = Math.abs(game.food.x - game.snake[0].x) + Math.abs(game.food.y - game.snake[0].y)
     const values = qTable[oldState] ?? [0, 0, 0]
     const max = Math.max(...values)
     const best = values.map((value, index) => value === max ? index : -1).filter(index => index >= 0)
@@ -74,7 +75,11 @@ for (let episode = 1; episode <= EPISODES; episode++) {
       : best[Math.floor(Math.random() * best.length)]
     const oldScore = game.score
     move(game, directionFor(game.direction, actions[actionIndex]))
-    const reward = game.gameOver ? -100 : game.score > oldScore ? 50 : -0.1
+    const newDistance = Math.abs(game.food.x - game.snake[0].x) + Math.abs(game.food.y - game.snake[0].y)
+    const reward = game.gameOver ? -100
+      : game.score > oldScore ? 50
+        : newDistance < oldDistance ? 1
+          : newDistance > oldDistance ? -1 : -0.1
     const future = qTable[state(game)] ?? [0, 0, 0]
     const target = reward + (game.gameOver ? 0 : 0.9 * Math.max(...future))
     values[actionIndex] += 0.15 * (target - values[actionIndex])
@@ -84,5 +89,29 @@ for (let episode = 1; episode <= EPISODES; episode++) {
   bestScore = Math.max(bestScore, game.score)
 }
 
+let evaluationTotal = 0
+let evaluationBest = 0
+const evaluationEpisodes = 10_000
+for (let episode = 0; episode < evaluationEpisodes; episode++) {
+  const game = createGame()
+  for (let step = 0; step < MAX_STEPS && !game.gameOver; step++) {
+    const values = qTable[state(game)] ?? [0, 0, 0]
+    const max = Math.max(...values)
+    const bestIndexes = values.map((value, index) => value === max ? index : -1).filter(index => index >= 0)
+    const bestIndex = bestIndexes[Math.floor(Math.random() * bestIndexes.length)]
+    move(game, directionFor(game.direction, actions[bestIndex]))
+  }
+  evaluationTotal += game.score
+  evaluationBest = Math.max(evaluationBest, game.score)
+}
+
 writeFileSync(new URL('../src/pretrained-q-table.json', import.meta.url), `${JSON.stringify(qTable, null, 2)}\n`)
-console.log(JSON.stringify({ episodes: EPISODES, states: Object.keys(qTable).length, averageScore: totalScore / EPISODES, bestScore }, null, 2))
+console.log(JSON.stringify({
+  episodes: EPISODES,
+  states: Object.keys(qTable).length,
+  trainingAverage: totalScore / EPISODES,
+  trainingBest: bestScore,
+  evaluationEpisodes,
+  evaluationAverage: evaluationTotal / evaluationEpisodes,
+  evaluationBest,
+}, null, 2))

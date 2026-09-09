@@ -74,13 +74,14 @@ function stateKey(game) {
 
 function loadLearningMemory() {
   try {
-    const saved = localStorage.getItem('snake-q-table-v2')
+    const saved = localStorage.getItem('snake-q-table-v3')
     return saved ? JSON.parse(saved) : structuredClone(pretrainedQTable)
   } catch { return structuredClone(pretrainedQTable) }
 }
 
 function learningMove(game, qTable) {
   const oldState = stateKey(game)
+  const oldDistance = Math.abs(game.food.x - game.snake[0].x) + Math.abs(game.food.y - game.snake[0].y)
   const values = qTable[oldState] ?? [0, 0, 0]
   const explore = Math.random() < 0.12
   const bestValue = Math.max(...values)
@@ -90,12 +91,16 @@ function learningMove(game, qTable) {
     : bestIndexes[Math.floor(Math.random() * bestIndexes.length)]
   const direction = absoluteDirection(game.direction, relativeActions[actionIndex])
   const nextGame = localMove(game, direction)
-  const reward = nextGame.gameOver ? -100 : nextGame.score > game.score ? 50 : -0.1
+  const newDistance = Math.abs(nextGame.food.x - nextGame.snake[0].x) + Math.abs(nextGame.food.y - nextGame.snake[0].y)
+  const reward = nextGame.gameOver ? -100
+    : nextGame.score > game.score ? 50
+      : newDistance < oldDistance ? 1
+        : newDistance > oldDistance ? -1 : -0.1
   const futureValues = qTable[stateKey(nextGame)] ?? [0, 0, 0]
   const target = reward + (nextGame.gameOver ? 0 : 0.9 * Math.max(...futureValues))
   const learned = values[actionIndex] + 0.15 * (target - values[actionIndex])
   qTable[oldState] = values.map((value, index) => index === actionIndex ? learned : value)
-  localStorage.setItem('snake-q-table-v2', JSON.stringify(qTable))
+  localStorage.setItem('snake-q-table-v3', JSON.stringify(qTable))
   return nextGame
 }
 
