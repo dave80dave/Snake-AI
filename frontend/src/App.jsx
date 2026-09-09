@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import pretrainedQTable from './pretrained-q-table.json'
 
 const directions = {
   ArrowUp: 'UP', w: 'UP', W: 'UP',
@@ -72,8 +73,10 @@ function stateKey(game) {
 }
 
 function loadLearningMemory() {
-  try { return JSON.parse(localStorage.getItem('snake-q-table-v1')) ?? {} }
-  catch { return {} }
+  try {
+    const saved = localStorage.getItem('snake-q-table-v2')
+    return saved ? JSON.parse(saved) : structuredClone(pretrainedQTable)
+  } catch { return structuredClone(pretrainedQTable) }
 }
 
 function learningMove(game, qTable) {
@@ -92,7 +95,7 @@ function learningMove(game, qTable) {
   const target = reward + (nextGame.gameOver ? 0 : 0.9 * Math.max(...futureValues))
   const learned = values[actionIndex] + 0.15 * (target - values[actionIndex])
   qTable[oldState] = values.map((value, index) => index === actionIndex ? learned : value)
-  localStorage.setItem('snake-q-table-v1', JSON.stringify(qTable))
+  localStorage.setItem('snake-q-table-v2', JSON.stringify(qTable))
   return nextGame
 }
 
@@ -111,10 +114,11 @@ export default function App() {
   const busy = useRef(false)
   const aiModeRef = useRef(false)
   const manualDirection = useRef('RIGHT')
-  const qTable = useRef(loadLearningMemory())
+  const qTable = useRef(null)
 
   const setMode = (enabled) => {
     aiModeRef.current = enabled
+    if (enabled && !qTable.current) qTable.current = loadLearningMemory()
     if (!enabled && game?.direction) manualDirection.current = game.direction
     setAiMode(enabled)
   }
@@ -137,7 +141,7 @@ export default function App() {
       setGame(current => path.endsWith('/new')
         ? createLocalGame()
         : path.endsWith('/ai-step')
-          ? learningMove(current, qTable.current)
+          ? learningMove(current, qTable.current ??= loadLearningMemory())
           : localMove(current, body.direction))
       busy.current = false
       return
@@ -208,7 +212,7 @@ export default function App() {
               <button className={!aiMode ? 'active' : ''} onClick={() => setMode(false)}>DU</button>
               <button className={aiMode ? 'active' : ''} onClick={() => setMode(true)}>KI</button>
             </div>
-            <p>{aiMode ? 'Q-Learning lernt dauerhaft in diesem Browser.' : 'Ändere die Richtung mit Pfeiltasten oder WASD.'}</p>
+            <p>{aiMode ? 'Lernt und speichert nur lokal. Keine Übertragung.' : 'Ändere die Richtung mit Pfeiltasten oder WASD.'}</p>
           </div>
           <Controls disabled={aiMode || !started} onMove={(direction) => { manualDirection.current = direction }} />
           <button className="restart" onClick={restart}>↻ {started ? 'Neues Spiel' : 'Spiel starten'}</button>
