@@ -126,7 +126,6 @@ export default function App() {
   }, [action, aiMode, game?.gameOver, started])
 
   const restart = async () => {
-    setMode(false)
     manualDirection.current = 'RIGHT'
     await action('/api/game/new')
     setStarted(true)
