@@ -58,6 +58,7 @@ async function request(path, options) {
 export default function App() {
   const [game, setGame] = useState(null)
   const [aiMode, setAiMode] = useState(false)
+  const [started, setStarted] = useState(false)
   const [error, setError] = useState('')
   const [localMode, setLocalMode] = useState(false)
   const busy = useRef(false)
@@ -116,18 +117,19 @@ export default function App() {
   }, [action, aiMode])
 
   useEffect(() => {
-    if (!game || game.gameOver) return
+    if (!started || !game || game.gameOver) return
     const timer = setInterval(() => {
       if (aiModeRef.current) action('/api/game/ai-step')
       else action('/api/game/move', { direction: manualDirection.current })
     }, 180)
     return () => clearInterval(timer)
-  }, [action, aiMode, game?.gameOver])
+  }, [action, aiMode, game?.gameOver, started])
 
   const restart = async () => {
     setMode(false)
     manualDirection.current = 'RIGHT'
     await action('/api/game/new')
+    setStarted(true)
   }
 
   return (
@@ -153,8 +155,8 @@ export default function App() {
             </div>
             <p>{aiMode ? 'Der sichere Zufalls-Agent steuert.' : 'Ändere die Richtung mit Pfeiltasten oder WASD.'}</p>
           </div>
-          <Controls disabled={aiMode} onMove={(direction) => { manualDirection.current = direction }} />
-          <button className="restart" onClick={restart}>↻ Neues Spiel</button>
+          <Controls disabled={aiMode || !started} onMove={(direction) => { manualDirection.current = direction }} />
+          <button className="restart" onClick={restart}>↻ {started ? 'Neues Spiel' : 'Spiel starten'}</button>
         </aside>
       </section>
       {error && <div className="error">{error} Starte zuerst das Spring-Boot-Backend auf Port 8080.</div>}
