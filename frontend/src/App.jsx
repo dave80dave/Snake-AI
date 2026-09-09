@@ -9,6 +9,46 @@ const directions = {
 
 const apiBase = import.meta.env.VITE_API_URL ?? ''
 
+function createLocalGame() {
+  const width = 20
+  const height = 20
+  const snake = [{ x: 10, y: 10 }]
+  let food
+  do food = { x: Math.floor(Math.random() * width), y: Math.floor(Math.random() * height) }
+  while (food.x === 10 && food.y === 10)
+  return { width, height, snake, food, direction: 'RIGHT', score: 0, gameOver: false }
+}
+
+const opposite = { UP: 'DOWN', DOWN: 'UP', LEFT: 'RIGHT', RIGHT: 'LEFT' }
+const vectors = { UP: [0, -1], DOWN: [0, 1], LEFT: [-1, 0], RIGHT: [1, 0] }
+
+function localMove(game, requestedDirection) {
+  if (game.gameOver) return game
+  const direction = opposite[game.direction] === requestedDirection ? game.direction : requestedDirection
+  const [dx, dy] = vectors[direction]
+  const head = { x: game.snake[0].x + dx, y: game.snake[0].y + dy }
+  const grows = head.x === game.food.x && head.y === game.food.y
+  const body = grows ? game.snake : game.snake.slice(0, -1)
+  const collision = head.x < 0 || head.x >= game.width || head.y < 0 || head.y >= game.height
+    || body.some(part => part.x === head.x && part.y === head.y)
+  if (collision) return { ...game, direction, gameOver: true }
+
+  const snake = [head, ...body]
+  let food = game.food
+  if (grows) {
+    do food = { x: Math.floor(Math.random() * game.width), y: Math.floor(Math.random() * game.height) }
+    while (snake.some(part => part.x === food.x && part.y === food.y))
+  }
+  return { ...game, snake, food, direction, score: game.score + (grows ? 1 : 0) }
+}
+
+function safeLocalDirection(game) {
+  const candidates = Object.keys(vectors).filter(direction => opposite[game.direction] !== direction)
+  const safe = candidates.filter(direction => !localMove(game, direction).gameOver)
+  const choices = safe.length ? safe : candidates
+  return choices[Math.floor(Math.random() * choices.length)]
+}
+
 async function request(path, options) {
   const response = await fetch(`${apiBase}${path}`, options)
   if (!response.ok) throw new Error('Das Backend ist nicht erreichbar.')
@@ -19,18 +59,30 @@ export default function App() {
   const [game, setGame] = useState(null)
   const [aiMode, setAiMode] = useState(false)
   const [error, setError] = useState('')
+  const [localMode, setLocalMode] = useState(false)
   const busy = useRef(false)
 
   const load = useCallback(async () => {
     try {
       setGame(await request('/api/game'))
       setError('')
-    } catch (err) { setError(err.message) }
+    } catch {
+      setLocalMode(true)
+      setGame(createLocalGame())
+      setError('')
+    }
   }, [])
 
   const action = useCallback(async (path, body) => {
     if (busy.current) return
     busy.current = true
+    if (localMode) {
+      setGame(current => path.endsWith('/new')
+        ? createLocalGame()
+        : localMove(current, path.endsWith('/ai-step') ? safeLocalDirection(current) : body.direction))
+      busy.current = false
+      return
+    }
     try {
       setGame(await request(path, {
         method: 'POST',
@@ -40,7 +92,7 @@ export default function App() {
       setError('')
     } catch (err) { setError(err.message) }
     finally { busy.current = false }
-  }, [])
+  }, [localMode])
 
   useEffect(() => { load() }, [load])
 
@@ -72,7 +124,7 @@ export default function App() {
         <div className="brand-mark">S</div>
         <div><p className="eyebrow">JAVA × REACT</p><h1>Snake Lab</h1></div>
         <div className={`connection ${error ? 'offline' : ''}`}>
-          <span />{error ? 'Offline' : 'Backend verbunden'}
+          <span />{error ? 'Offline' : localMode ? 'Browser-Modus' : 'Backend verbunden'}
         </div>
       </header>
 
