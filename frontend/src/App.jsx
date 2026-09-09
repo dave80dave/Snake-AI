@@ -128,14 +128,6 @@ export default function App() {
 
   return (
     <main className="page-shell">
-      <header>
-        <div className="brand-mark">S</div>
-        <div><p className="eyebrow">JAVA × REACT</p><h1>Snake Lab</h1></div>
-        <div className={`connection ${error ? 'offline' : ''}`}>
-          <span />{error ? 'Offline' : localMode ? 'Browser-Modus' : 'Backend verbunden'}
-        </div>
-      </header>
-
       <section className="hero-copy">
         <div><p className="eyebrow">PLAYGROUND 01</p><h2>Think. Move.<br/><em>Grow.</em></h2></div>
         <p className="intro">Steuere die Schlange selbst oder überlasse das Spielfeld dem KI-Autopiloten.</p>
