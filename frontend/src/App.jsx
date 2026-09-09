@@ -61,6 +61,12 @@ export default function App() {
   const [error, setError] = useState('')
   const [localMode, setLocalMode] = useState(false)
   const busy = useRef(false)
+  const aiModeRef = useRef(false)
+
+  const setMode = (enabled) => {
+    aiModeRef.current = enabled
+    setAiMode(enabled)
+  }
 
   const load = useCallback(async () => {
     try {
@@ -109,12 +115,14 @@ export default function App() {
 
   useEffect(() => {
     if (!aiMode || game?.gameOver) return
-    const timer = setInterval(() => action('/api/game/ai-step'), 135)
+    const timer = setInterval(() => {
+      if (aiModeRef.current) action('/api/game/ai-step')
+    }, 135)
     return () => clearInterval(timer)
   }, [action, aiMode, game?.gameOver])
 
   const restart = async () => {
-    setAiMode(false)
+    setMode(false)
     await action('/api/game/new')
   }
 
@@ -144,10 +152,10 @@ export default function App() {
           <div className="panel">
             <span className="label">MODUS</span>
             <div className="mode-switch">
-              <button className={!aiMode ? 'active' : ''} onClick={() => setAiMode(false)}>DU</button>
-              <button className={aiMode ? 'active' : ''} onClick={() => setAiMode(true)}>KI</button>
+              <button className={!aiMode ? 'active' : ''} onClick={() => setMode(false)}>DU</button>
+              <button className={aiMode ? 'active' : ''} onClick={() => setMode(true)}>KI</button>
             </div>
-            <p>{aiMode ? 'Der sichere Zufalls-Agent steuert.' : 'Pfeiltasten oder WASD verwenden.'}</p>
+            <p>{aiMode ? 'Der sichere Zufalls-Agent steuert.' : 'Ein Tastendruck entspricht einem Schritt.'}</p>
           </div>
           <Controls disabled={aiMode} onMove={(direction) => action('/api/game/move', { direction })} />
           <button className="restart" onClick={restart}>↻ Neues Spiel</button>
