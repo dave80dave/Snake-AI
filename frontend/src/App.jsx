@@ -87,7 +87,7 @@ function learningMove(game, qTable) {
     : bestIndexes[Math.floor(Math.random() * bestIndexes.length)]
   const direction = absoluteDirection(game.direction, relativeActions[actionIndex])
   const nextGame = localMove(game, direction)
-  const reward = nextGame.gameOver ? -100 : nextGame.score > game.score ? 10 : -0.1
+  const reward = nextGame.gameOver ? -100 : nextGame.score > game.score ? 50 : -0.1
   const futureValues = qTable[stateKey(nextGame)] ?? [0, 0, 0]
   const target = reward + (nextGame.gameOver ? 0 : 0.9 * Math.max(...futureValues))
   const learned = values[actionIndex] + 0.15 * (target - values[actionIndex])
