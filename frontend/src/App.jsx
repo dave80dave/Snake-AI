@@ -62,9 +62,11 @@ export default function App() {
   const [localMode, setLocalMode] = useState(false)
   const busy = useRef(false)
   const aiModeRef = useRef(false)
+  const manualDirection = useRef('RIGHT')
 
   const setMode = (enabled) => {
     aiModeRef.current = enabled
+    if (!enabled && game?.direction) manualDirection.current = game.direction
     setAiMode(enabled)
   }
 
@@ -107,22 +109,24 @@ export default function App() {
       const direction = directions[event.key]
       if (!direction || aiMode) return
       event.preventDefault()
-      action('/api/game/move', { direction })
+      manualDirection.current = direction
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [action, aiMode])
 
   useEffect(() => {
-    if (!aiMode || game?.gameOver) return
+    if (!game || game.gameOver) return
     const timer = setInterval(() => {
       if (aiModeRef.current) action('/api/game/ai-step')
-    }, 135)
+      else action('/api/game/move', { direction: manualDirection.current })
+    }, 180)
     return () => clearInterval(timer)
   }, [action, aiMode, game?.gameOver])
 
   const restart = async () => {
     setMode(false)
+    manualDirection.current = 'RIGHT'
     await action('/api/game/new')
   }
 
@@ -147,9 +151,9 @@ export default function App() {
               <button className={!aiMode ? 'active' : ''} onClick={() => setMode(false)}>DU</button>
               <button className={aiMode ? 'active' : ''} onClick={() => setMode(true)}>KI</button>
             </div>
-            <p>{aiMode ? 'Der sichere Zufalls-Agent steuert.' : 'Ein Tastendruck entspricht einem Schritt.'}</p>
+            <p>{aiMode ? 'Der sichere Zufalls-Agent steuert.' : 'Ändere die Richtung mit Pfeiltasten oder WASD.'}</p>
           </div>
-          <Controls disabled={aiMode} onMove={(direction) => action('/api/game/move', { direction })} />
+          <Controls disabled={aiMode} onMove={(direction) => { manualDirection.current = direction }} />
           <button className="restart" onClick={restart}>↻ Neues Spiel</button>
         </aside>
       </section>
